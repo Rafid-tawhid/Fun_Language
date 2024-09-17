@@ -51,9 +51,9 @@ class _QustionPageState extends State<QustionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff222222),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Color(0xff222222),
+        backgroundColor: Colors.white,
         title: Text(
           'Question',
           style: TextStyle(color: Colors.deepOrange),
