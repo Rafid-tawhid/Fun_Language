@@ -60,8 +60,10 @@ class _NewMessageState extends State<NewMessage> {
       'text':enteredMsg,
       'createdAt':Timestamp.now(),
       'userId':user.uid,
-      'username':userData.data()!['username'],
-      'userImage':userData.data()!['image_url']
+      'username':'Tawhid',
+      'userImage':''
+    }).then((v){
+      debugPrint(v.toString());
     });
 
     _messageCon.clear();

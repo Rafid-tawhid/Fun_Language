@@ -40,6 +40,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _logout() {
     FirebaseAuth.instance.signOut();
+
   }
 
   void setupPushNotification() async{
