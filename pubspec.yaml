@@ -68,6 +68,7 @@ dependencies:
   flutter_voice_recorder: ^0.0.2
   camera:
   gal: ^2.3.0
+  flutter_rating_bar: ^4.0.0
 
 
 

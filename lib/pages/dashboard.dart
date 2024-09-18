@@ -9,6 +9,7 @@ import '../utils/temp_db.dart';
 import '../widgets/cards.dart';
 import '../widgets/drawer.dart';
 import 'chat.dart';
+import 'feedback_and_support_screen.dart';
 import 'lessions/record_my_audio.dart';
 import 'lessions/vocabolary_builder.dart';
 import 'translation_screens.dart';
@@ -62,7 +63,7 @@ class _DashboardState extends State<Dashboard> {
              Navigator.pushNamed(context,ChatScreen.routeName);
             }
             if(value=='Feedback and Support'){
-             // Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatGPTApp()));
+             Navigator.push(context, MaterialPageRoute(builder: (context)=>FeedbackAndSupportScreen()));
 
             }
             if(value=='Progress Tracking'){
