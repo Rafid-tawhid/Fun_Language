@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:my_messenger/pages/auth.dart';
@@ -49,6 +50,7 @@ void main() async {
           storageBucket: 'my-blog-309118.appspot.com'
       )
   );
+
   runApp(MyApp());
 }
 
