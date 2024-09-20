@@ -100,78 +100,74 @@ class _TranslatorAppState extends State<TranslatorApp> {
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(
-                height: 30,
-              ),
+              const SizedBox(height: 30),
+
+              // From Language Dropdown
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 40),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                    color: Colors.indigo.shade100,
-                    borderRadius: BorderRadius.circular(10)),
+                  color: Colors.indigo.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    )
+                  ],
+                ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('From'),
-                    const SizedBox(
-                      width: 100,
-                    ),
-                    DropdownButton(
+                    const Text('From', style: TextStyle(fontSize: 16)),
+                    DropdownButton<String>(
                       value: selectedvalue,
-                      focusColor: Colors.transparent,
+                      underline: const SizedBox(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedvalue = value!;
+                          from = languagescode[languages.indexOf(value)];
+                        });
+                      },
                       items: languages.map((lang) {
                         return DropdownMenuItem(
                           value: lang,
                           child: Text(lang),
-                          onTap: () {
-                            if (lang == languages[0]) {
-                              from = languagescode[0];
-                            } else if (lang == languages[1]) {
-                              from = languagescode[1];
-                            } else if (lang == languages[2]) {
-                              from = languagescode[2];
-                            } else if (lang == languages[3]) {
-                              from = languagescode[3];
-                            } else if (lang == languages[4]) {
-                              from = languagescode[4];
-                            } else if (lang == languages[5]) {
-                              from = languagescode[5];
-                            } else if (lang == languages[6]) {
-                              from = languagescode[6];
-                            } else if (lang == languages[7]) {
-                              from = languagescode[7];
-                            } else if (lang == languages[8]) {
-                              from = languagescode[8];
-                            }
-                            setState(() {
-                              // print(lang);
-                              // print(from);
-                            });
-                          },
                         );
                       }).toList(),
-                      onChanged: (value) {
-                        selectedvalue = value!;
-                      },
-                    )
+                    ),
                   ],
                 ),
               ),
+
+              const SizedBox(height: 20),
+
+              // Input Text Field
               Container(
                 padding: const EdgeInsets.all(20),
-                margin: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                    color: Colors.blueGrey.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.black)),
+                  color: Colors.blueGrey.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.blueGrey.shade300),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    )
+                  ],
+                ),
                 child: Form(
                   key: formkey,
                   child: TextFormField(
                     controller: controller,
                     maxLines: null,
-                    minLines: null,
+                    minLines: 4,
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Please enter some text';
@@ -180,102 +176,108 @@ class _TranslatorAppState extends State<TranslatorApp> {
                     },
                     textInputAction: TextInputAction.done,
                     decoration: const InputDecoration(
-                        enabledBorder: InputBorder.none,
-                        border: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        errorStyle: TextStyle(color: Colors.white)),
+                      border: InputBorder.none,
+                      hintText: 'Enter text to translate',
+                      hintStyle: TextStyle(color: Colors.black54),
+                    ),
                     style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18),
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
                   ),
                 ),
               ),
+
+              const SizedBox(height: 20),
+
+              // To Language Dropdown
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 40),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                    color: Colors.indigo.shade100,
-                    borderRadius: BorderRadius.circular(10)),
+                  color: Colors.indigo.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    )
+                  ],
+                ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('To'),
-                    const SizedBox(
-                      width: 100,
-                    ),
-                    DropdownButton(
+                    const Text('To', style: TextStyle(fontSize: 16)),
+                    DropdownButton<String>(
                       value: selectedvalue2,
-                      focusColor: Colors.transparent,
+                      underline: const SizedBox(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedvalue2 = value!;
+                          to = languagescode[languages.indexOf(value)];
+                        });
+                      },
                       items: languages.map((lang) {
                         return DropdownMenuItem(
                           value: lang,
                           child: Text(lang),
-                          onTap: () {
-                            if (lang == languages[0]) {
-                              to = languagescode[0];
-                            } else if (lang == languages[1]) {
-                              to = languagescode[1];
-                            } else if (lang == languages[2]) {
-                              to = languagescode[2];
-                            } else if (lang == languages[3]) {
-                              to = languagescode[3];
-                            } else if (lang == languages[4]) {
-                              to = languagescode[4];
-                            } else if (lang == languages[5]) {
-                              to = languagescode[5];
-                            } else if (lang == languages[6]) {
-                              to = languagescode[6];
-                            } else if (lang == languages[7]) {
-                              to = languagescode[7];
-                            } else if (lang == languages[8]) {
-                              to = languagescode[8];
-                            }
-                            setState(() {
-                              print(lang);
-                              print(from);
-                            });
-                          },
                         );
                       }).toList(),
-                      onChanged: (value) {
-                        selectedvalue2 = value!;
-                      },
-                    )
+                    ),
                   ],
                 ),
               ),
+
+              const SizedBox(height: 20),
+
+              // Translation Output
               Container(
                 padding: const EdgeInsets.all(20),
-                margin: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                    color: Colors.blueGrey.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.black)),
+                  color: Colors.blueGrey.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.black),
+                ),
                 child: Center(
                   child: SelectableText(
                     data,
                     style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
+
+              const SizedBox(height: 20),
+
+              // Translate Button
               ElevatedButton(
-                  onPressed: translate,
-                  style: ButtonStyle(
-                      backgroundColor:
-                      MaterialStatePropertyAll(Colors.blue),
-                      fixedSize: const MaterialStatePropertyAll(Size(300, 45))),
-                  child:isloading?const SizedBox.square(
-                    dimension: 20,
-                    child: CircularProgressIndicator(color: Colors.white,),
-                  ): const Text('Translate',style:  TextStyle(color: Colors.white),)),
-              const SizedBox(
-                height: 30,
-              )
+                onPressed: translate,
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.blue),
+                  fixedSize: MaterialStateProperty.all(const Size(300, 50)),
+                  shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                child: isloading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text(
+                  'Translate',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              ),
+
+              const SizedBox(height: 30),
             ],
-          )),
+          ),
+        ),
+      ),
     );
   }
 }

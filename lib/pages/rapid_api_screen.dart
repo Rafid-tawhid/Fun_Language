@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:my_messenger/providers/rapid_provider.dart';
@@ -20,6 +21,7 @@ class _RapidApiScreenState extends State<RapidApiScreen> {
   Widget build(BuildContext context) {
     final pro = Provider.of<RapidProvider>(context);
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('GrammarBot'),
         actions: [
@@ -58,7 +60,24 @@ class _RapidApiScreenState extends State<RapidApiScreen> {
                       }
                     });
               },
-              icon: Icon(Icons.info_outline))
+              icon: Icon(Icons.info_outline)),
+          IconButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                  ),
+                  builder: (BuildContext context) {
+                    return SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.7, // 70% of screen height
+                      child: GrammarMistakesSheet(),
+                    );
+                  },
+                );
+              },
+              icon: Icon(Icons.list)),
         ],
       ),
       body: Column(
@@ -171,6 +190,70 @@ class _RapidApiScreenState extends State<RapidApiScreen> {
         ],
       ),
     );
-    ;
+
   }
+}
+
+
+class GrammarMistakesSheet extends StatelessWidget {
+  final List<String> grammarMistakes = [
+    'She don’t like pizza.',
+    'We was going to the store.',
+    'He go to school everyday.',
+    'I didn’t went to the party.',
+    'They has been here before.',
+    'She didn’t saw the movie.',
+    'He do not wants to go.',
+    'We was playing football yesterday.',
+    'There is too many people in the room.',
+    'I seen her at the mall.'
+  ];
+
+  void _copyToClipboard(BuildContext context, String text) {
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Copied: "$text"'),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: grammarMistakes.map((sentence) {
+            return ListTile(
+              title: Text(
+                sentence,
+                style: const TextStyle(fontSize: 16),
+              ),
+              trailing: IconButton(
+                icon: const Icon(Icons.copy, color: Colors.blueAccent),
+                onPressed: () => _copyToClipboard(context, sentence),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+}
+
+void showGrammarMistakesModal(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (BuildContext context) {
+      return SizedBox(
+        height: MediaQuery.of(context).size.height * 0.7, // 70% of screen height
+        child: GrammarMistakesSheet(),
+      );
+    },
+  );
 }

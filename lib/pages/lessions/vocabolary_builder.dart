@@ -43,6 +43,7 @@ class _DictionaryAppState extends State<DictionaryApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: TextField(
           controller: _textEditingController,
@@ -51,27 +52,32 @@ class _DictionaryAppState extends State<DictionaryApp> {
           ),
         ),
         actions: [
-          IconButton(onPressed: () async {
-            String word = _textEditingController.text.trim();
-            if (word.isNotEmpty) {
-              EasyLoading.show(maskType: EasyLoadingMaskType.black);
-              await getWordMeaning(word);
-              EasyLoading.dismiss();
-
-            }
-          }, icon: Icon(Icons.search))
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: IconButton(onPressed: () async {
+              String word = _textEditingController.text.trim();
+              if (word.isNotEmpty) {
+                EasyLoading.show(maskType: EasyLoadingMaskType.black);
+                await getWordMeaning(word);
+                EasyLoading.dismiss();
+              }
+            }, icon: Icon(Icons.search),color: Colors.blueAccent,style: IconButton.styleFrom(backgroundColor: Colors.white),),
+          ),
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
 
-            Text(
-              _meaning,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18),
+            if(_meaning.isNotEmpty)Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                _meaning,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18),
+              ),
             ),
             SizedBox(height: 20),
             Expanded(
@@ -120,18 +126,37 @@ class MeaningfulWordsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: words.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(words[index]),
-          onTap: () async {
-            EasyLoading.show(maskType: EasyLoadingMaskType.black);
-            await _showWordMeaningDialog(context, words[index]);
-            EasyLoading.dismiss();
-          },
-        );
-      },
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: ListView.builder(
+        itemCount: words.length,
+        itemBuilder: (context, index) {
+          return Card(
+            margin: const EdgeInsets.symmetric(vertical: 8.0),
+            elevation: 5,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: ListTile(
+              leading: Icon(Icons.favorite, color: Colors.deepPurpleAccent),
+              title: Text(
+                words[index],
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.deepPurple,
+                ),
+              ),
+              trailing: Icon(Icons.info_outline, color: Colors.deepPurple),
+              onTap: () async {
+                EasyLoading.show(maskType: EasyLoadingMaskType.black);
+                await _showWordMeaningDialog(context, words[index]);
+                EasyLoading.dismiss();
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -141,14 +166,29 @@ class MeaningfulWordsList extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(word),
-          content: Text(meaning),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          title: Text(
+            word,
+            style: TextStyle(
+              color: Colors.deepPurple,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            meaning,
+            style: TextStyle(fontSize: 16),
+          ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Close'),
+              child: Text(
+                'Close',
+                style: TextStyle(color: Colors.deepPurple),
+              ),
             ),
           ],
         );

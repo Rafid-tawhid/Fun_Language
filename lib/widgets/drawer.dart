@@ -24,7 +24,8 @@ class MyDrawer extends StatelessWidget {
                   CircleAvatar(
                     radius: 35,
                     backgroundColor: Colors.white,
-                    child: Image.network(UserModel.image??'https://cdn.vectorstock.com/i/preview-1x/17/61/male-avatar-profile-picture-vector-10211761.jpg',height: 50,width: 50,),
+                    backgroundImage: NetworkImage(UserModel.image??'https://cdn.vectorstock.com/i/preview-1x/17/61/male-avatar-profile-picture-vector-10211761.jpg'),
+
                     // You can replace the image with the actual user profile image
                     // backgroundImage: NetworkImage('url_to_profile_image'),
                   ),

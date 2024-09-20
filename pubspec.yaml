@@ -56,11 +56,11 @@ dependencies:
   chat_bubbles:
   english_words: ^4.0.0
   flutter_easyloading: ^3.0.5
-  audioplayers: ^5.2.1
+  audioplayers: ^6.1.0
   path: ^1.8.0
   permission_handler: ^11.2.1
   record: ^5.0.4
-  flutter_sound: ^9.2.13
+  flutter_sound: ^9.16.0
   flutter_launcher_icons: ^0.13.1
   provider: ^6.1.1
   path_provider: ^2.1.2
@@ -69,6 +69,8 @@ dependencies:
   camera:
   gal: ^2.3.0
   flutter_rating_bar: ^4.0.0
+
+
 
 
 

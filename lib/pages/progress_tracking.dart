@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:my_messenger/models/user_model.dart';
 
 import '../widgets/chart.dart';
 import '../widgets/profile.dart';
@@ -35,6 +36,7 @@ class ProgressTracking extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Language Learning Progress'),
       ),
@@ -48,9 +50,9 @@ class ProgressTracking extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ProfileWidget(
-                  avatarUrl: 'https://example.com/avatar.jpg',
-                  name: 'John Doe',
-                  mainDescription: 'rafid@gmail.com',
+                  avatarUrl: UserModel.image??'https://example.com/avatar.jpg',
+                  name: UserModel.name??'John Doe',
+                  mainDescription: UserModel.email??'rafid@gmail.com',
                 ),
                 // Align(
                 //   alignment: Alignment.topRight,

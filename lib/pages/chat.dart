@@ -25,6 +25,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(title: Text('Chat box'),
       actions: [
         IconButton(onPressed: _logout, icon: Icon(Icons.exit_to_app))

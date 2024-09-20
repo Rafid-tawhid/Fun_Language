@@ -13,17 +13,17 @@ class MySpeakingPractices extends StatefulWidget {
 class _MySpeakingPracticesState extends State<MySpeakingPractices> {
   final FlutterTts _flutterTts = FlutterTts();
   Map? _currentVoice;
- late List<bool> isPlayingList;
-  late SpeechProvider provider;
+
+
 
   @override
   void initState() {
     super.initState();
 
     initTTS();
-    provider=Provider.of(context,listen: false);
-    provider.getSpeechPractices();
-    isPlayingList = List.filled(provider.speakingPracList.length, false);
+   Future.microtask((){
+     getAllSpeakingData();
+   });
   }
 
   void initTTS() {
@@ -48,38 +48,78 @@ class _MySpeakingPracticesState extends State<MySpeakingPractices> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('My Practices'),
       ),
       body: Consumer<SpeechProvider>(
-        builder: (context,pro,_)=>ListView.builder(
+        builder: (context,pro,_)=>pro.isLoading?Center(child: CircularProgressIndicator(),): ListView.builder(
           itemCount: pro.speakingPracList.length,
-          itemBuilder: (context, index) => ListTile(
-            title: Text(
-              pro.speakingPracList[index]['text'],
-              maxLines: 1,
+          itemBuilder: (context, index) => Card(
+            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
-            leading: Text((index + 1).toString()),
-            trailing: IconButton(
-              onPressed: () {
-                setState(() {
-                  isPlayingList[index] = !isPlayingList[index];
-                });
-                if (isPlayingList[index]) {
-                  _flutterTts.speak(pro.speakingPracList[index]['text']);
+            elevation: 5,
+            color: pro.isPlayingList[index] ? Colors.blue.shade50 : Colors.white,
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              leading: CircleAvatar(
+                backgroundColor: Colors.blueAccent,
+                radius: 18,
+                child: Text(
+                  (index + 1).toString(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              title: Text(
+                pro.speakingPracList[index]['text'],
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: pro.isPlayingList[index] ? Colors.blueAccent : Colors.black87,
+                ),
+              ),
+              trailing: GestureDetector(
+                onTap: () {
+                  pro.setLoadingIndex(index);
 
-                } else {
-                  _flutterTts.stop();
-                }
-              },
-              icon: isPlayingList[index]
-                  ? const Icon(Icons.pause)
-                  : const Icon(Icons.play_arrow),
-            // ),
+                  if (pro.isPlayingList[index]) {
+                    _flutterTts.speak(pro.speakingPracList[index]['text']);
+                  } else {
+                    _flutterTts.stop();
+                  }
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  decoration: BoxDecoration(
+                    color: pro.isPlayingList[index] ? Colors.blueAccent : Colors.grey[300],
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  padding: const EdgeInsets.all(8),
+                  child: Icon(
+                    pro.isPlayingList[index] ? Icons.pause : Icons.play_arrow,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
-      )
-    ));
+        )
+      ));
+  }
+
+  void getAllSpeakingData() async{
+    SpeechProvider provider;
+    provider=Provider.of(context,listen: false);
+   await provider.setIsLoading(true);
+   await provider.getSpeechPractices();
+    provider.setIsLoading(false);
   }
 }
 

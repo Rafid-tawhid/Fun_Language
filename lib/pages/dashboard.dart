@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:my_messenger/pages/progress_tracking.dart';
 import 'package:my_messenger/pages/question_page.dart';
 import 'package:my_messenger/pages/rapid_api_screen.dart';
+import 'package:my_messenger/pages/social_media_features.dart';
 import 'package:my_messenger/pages/translater_page.dart';
 
 import '../demo_camera.dart';
 import '../utils/temp_db.dart';
 import '../widgets/cards.dart';
 import '../widgets/drawer.dart';
+import 'certificate_recognisation.dart';
 import 'chat.dart';
 import 'feedback_and_support_screen.dart';
 import 'lessions/record_my_audio.dart';
@@ -75,7 +77,12 @@ class _DashboardState extends State<Dashboard> {
             }
             if(value=='Social Features'){
            //   Navigator.push(context, MaterialPageRoute(builder: (context)=>RecorderExample()));
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>CameraScreen()));
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>SocialFeaturesScreen()));
+
+            }
+            if(value=='Certificates and Recognition'){
+           //   Navigator.push(context, MaterialPageRoute(builder: (context)=>RecorderExample()));
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>CertificatesScreen()));
 
             }
           },);

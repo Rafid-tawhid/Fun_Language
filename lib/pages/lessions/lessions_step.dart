@@ -10,6 +10,7 @@ class LessionsSteps extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Language Learning'),
       ),

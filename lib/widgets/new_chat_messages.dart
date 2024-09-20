@@ -11,66 +11,100 @@ class NewMessage extends StatefulWidget {
 }
 
 class _NewMessageState extends State<NewMessage> {
-  final _messageCon=TextEditingController();
-
+  final TextEditingController _messageCon = TextEditingController();
 
   @override
   void dispose() {
     _messageCon.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 14,right: 14,bottom: 14),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade300,
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
       child: Row(
         children: [
-          Expanded(child: TextField(
-            textCapitalization: TextCapitalization.sentences,
-            autocorrect: true,
-            controller: _messageCon,
-            enableSuggestions: true,
-            decoration: InputDecoration(
-              labelText: 'Send a message..'
+          Expanded(
+            child: TextField(
+              controller: _messageCon,
+              textCapitalization: TextCapitalization.sentences,
+              autocorrect: true,
+              enableSuggestions: true,
+              decoration: InputDecoration(
+                hintText: 'Send a message...',
+                hintStyle: TextStyle(color: Colors.grey.shade500),
+                filled: true,
+                fillColor: Colors.grey.shade100,
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 12, horizontal: 16),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide(
+                    color: Colors.blueAccent.shade100,
+                    width: 2,
+                  ),
+                ),
+              ),
             ),
-          )),
-          IconButton(onPressed: _submitMessage, icon: Icon(Icons.send,color: Colors.blueAccent,))
-
+          ),
+          const SizedBox(width: 10),
+          GestureDetector(
+            onTap: _submitMessage,
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.blueAccent,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.send,
+                color: Colors.white,
+                size: 24,
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-
   Future<void> _submitMessage() async {
-
-
-    final enteredMsg=_messageCon.text;
-    if(enteredMsg.trim().isEmpty){
+    final enteredMsg = _messageCon.text;
+    if (enteredMsg.trim().isEmpty) {
       return;
     }
     FocusScope.of(context).unfocus();
     _messageCon.clear();
 
-
-    final user=FirebaseAuth.instance.currentUser!;
-    final userData= await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-
-    debugPrint('NAME');
-    debugPrint(userData.get('image_url'));
+    final user = FirebaseAuth.instance.currentUser!;
+    final userData =
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
 
     FirebaseFirestore.instance.collection('chat').add({
-      'text':enteredMsg,
-      'createdAt':Timestamp.now(),
-      'userId':user.uid,
-      'username':userData.get('username'),
-      'userImage':userData.get('image_url')
-    }).then((v){
-      debugPrint('----------');
-      debugPrint(v.toString());
+      'text': enteredMsg,
+      'createdAt': Timestamp.now(),
+      'userId': user.uid,
+      'username': userData.get('username'),
+      'userImage': userData.get('image_url'),
     });
 
     _messageCon.clear();
-
   }
 }
+
