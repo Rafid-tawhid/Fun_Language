@@ -55,6 +55,7 @@ class _FeedbackAndSupportScreenState extends State<FeedbackAndSupportScreen> {
   Widget build(BuildContext context) {
 
     return  Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Feedback',style: TextStyle(color: Colors.white),),
         backgroundColor: Colors.purple,

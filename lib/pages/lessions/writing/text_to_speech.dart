@@ -50,6 +50,7 @@ class _SpeechSampleAppState extends State<SpeechSampleApp> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Writing Practice'),
       ),

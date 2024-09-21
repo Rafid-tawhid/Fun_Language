@@ -54,14 +54,6 @@ class ProgressTracking extends StatelessWidget {
                   name: UserModel.name??'John Doe',
                   mainDescription: UserModel.email??'rafid@gmail.com',
                 ),
-                // Align(
-                //   alignment: Alignment.topRight,
-                //   child: Container(
-                //     height: 200,
-                //     width: 200,
-                //     child: _buildPieChart(),
-                //   ),
-                // ),
               ],
             ),
             Text(

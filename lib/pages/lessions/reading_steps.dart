@@ -37,6 +37,7 @@ class ReadingSteps extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Basics of Reading'), // Customize app bar color
       ),
