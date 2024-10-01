@@ -3,6 +3,7 @@ import 'package:my_messenger/pages/progress_tracking.dart';
 import 'package:my_messenger/pages/question_page.dart';
 import 'package:my_messenger/pages/rapid_api_screen.dart';
 import 'package:my_messenger/pages/social_media_features.dart';
+import 'package:my_messenger/pages/traffic_system/traffic_update_screen.dart';
 import 'package:my_messenger/pages/translater_page.dart';
 
 import '../demo_camera.dart';
@@ -38,6 +39,11 @@ class _DashboardState extends State<Dashboard> {
       drawer: MyDrawer(),
       appBar: AppBar(
         title: const Text('Education Topics'),
+        actions: [
+          IconButton(onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>TrafficUpdateScreen()));
+          }, icon: Icon(Icons.directions_transit_filled_rounded),color: Colors.green,)
+        ],
       ),
       body: GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

@@ -111,6 +111,7 @@ class SocialFeaturesScreen extends StatelessWidget {
       ),
     );
   }
+  //Nothing
 
   // Widget to build Achievement cards
   Widget _buildAchievementCard(String title, String description, String date, BuildContext context) {
