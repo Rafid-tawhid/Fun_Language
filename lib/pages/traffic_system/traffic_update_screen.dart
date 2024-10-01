@@ -135,7 +135,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    FutureBuilder<DocumentSnapshot>(
+                                   if(postData['userId']!=null) FutureBuilder<DocumentSnapshot>(
                                       future: FirebaseFirestore.instance.collection('users').doc(postData['userId']).get(),
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -165,7 +165,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                                             children: [
                                               ClipRRect(
                                                 borderRadius: BorderRadius.circular(50.0), // Circular image
-                                                child: Image.network('https://cdn.vectorstock.com/i/preview-1x/17/61/male-avatar-profile-picture-vector-10211761.jpg',
+                                                child: Image.network(snapshot.data!['image_url']??'https://cdn.vectorstock.com/i/preview-1x/17/61/male-avatar-profile-picture-vector-10211761.jpg',
                                                   height: 50,
                                                   width: 50,
                                                   fit: BoxFit.cover,
@@ -225,7 +225,6 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                                         }
                                       },
                                     ),
-
                                   ],
                                 ),
 
@@ -280,15 +279,22 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
 
 
   }
-  String? formatTimestamp(Timestamp timestamp) {
+  String? formatTimestamp(Timestamp? timestamp) {
     // Convert the timestamp to a DateTime object
-    DateTime dateTime = timestamp.toDate();
+    if(timestamp!=null){
+      DateTime dateTime = timestamp.toDate();
 
-    // Format the DateTime object to a readable string
-    // You can customize the format string as needed
-    String? formattedDate = DateFormat('MMMM d, y, h:mm a').format(dateTime);
+      // Format the DateTime object to a readable string
+      // You can customize the format string as needed
+      String? formattedDate = DateFormat('MMMM d, y, h:mm a').format(dateTime);
+      return formattedDate;
+    }
+    else {
+      return null;
+    }
 
-    return formattedDate;
+
+
   }
   Widget _buildPostAction(IconData icon, String label, int count,String userId) {
     return InkWell(
