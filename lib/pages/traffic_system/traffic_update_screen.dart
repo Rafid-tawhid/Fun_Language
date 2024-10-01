@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../models/user_model.dart';
+
 class TrafficUpdateScreen extends StatefulWidget {
   const TrafficUpdateScreen({super.key});
 
@@ -47,59 +49,53 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
         },
         child: Padding(
           padding: const EdgeInsets.all(12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 25,
-                    backgroundImage: NetworkImage(
-                      'https://via.placeholder.com/150',
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    ClipRRect(
+                      child: Image.network(UserModel.image??'https://cdn.vectorstock.com/i/preview-1x/17/61/male-avatar-profile-picture-vector-10211761.jpg',height: 60,width: 60,fit: BoxFit.cover,),
+                      borderRadius: BorderRadius.circular(50.0),
+
                     ),
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      "What's on your mind?",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        focusNode: _focusNode,
+                        controller: _postController,
+                        maxLines: null,
+                        keyboardType: TextInputType.multiline,
+                        decoration: InputDecoration(
+                          hintText: "What's on your mind?...",
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          contentPadding: EdgeInsets.all(12),
+                        ),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Expanded(
-                child: TextField(
-                  focusNode: _focusNode,
-                  controller: _postController,
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
-                  decoration: InputDecoration(
-                    hintText: "Share your thoughts...",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    contentPadding: EdgeInsets.all(12),
-                  ),
+                  ],
                 ),
-              ),
-              SizedBox(height: 10),
-              if (_isFocused)
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: ElevatedButton.icon(
-                    onPressed: _uploadPost,
-                    icon: Icon(Icons.send),
-                    label: Text('Post'),
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                SizedBox(height: 10),
+                if (_isFocused)Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton.icon(
+                      onPressed: _uploadPost,
+                      icon: Icon(Icons.send),
+                      label: Text('Post'),
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
                     ),
                   ),
-                ),
-            ],
+
+              ],
+            ),
           ),
         ),
       ),
