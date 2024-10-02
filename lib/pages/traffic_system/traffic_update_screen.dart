@@ -257,9 +257,15 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    _buildPostAction(Icons.thumb_up_alt_outlined, 'Like', postData['likes'] ?? 0,postData['userId']),
-                                    _buildPostAction(Icons.comment_outlined, 'Comment', postData['comments']?.length ?? 0,postData['userId']),
-                                    _buildPostAction(Icons.share_outlined, 'Share', postData['shares'] ?? 0,postData['userId']),
+                                    _buildPostAction(Icons.thumb_up_alt_outlined, 'Like', postData['likes'] ?? 0,postData['userId'],(){
+                                      debugPrint('Clicked Like');
+                                    }),
+                                    _buildPostAction(Icons.comment_outlined, 'Comment', postData['comments']?.length ?? 0,postData['userId'],(){
+                                      debugPrint('Clicked Comment');
+                                    }),
+                                    _buildPostAction(Icons.share_outlined, 'Share', postData['shares'] ?? 0,postData['userId'],(){
+                                      debugPrint('Clicked Share');
+                                    }),
                                   ],
                                 ),
                               ],
@@ -296,12 +302,9 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
 
 
   }
-  Widget _buildPostAction(IconData icon, String label, int count,String userId) {
+  Widget _buildPostAction(IconData icon, String label, int count,String userId,VoidCallback onClick) {
     return InkWell(
-      onTap: () async {
-        //FirebaseFirestore.instance.collection('posts')
-
-      },
+      onTap: onClick,
       child: Row(
         children: [
           Icon(icon, color: Colors.grey),
