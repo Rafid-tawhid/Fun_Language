@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:my_messenger/main.dart';
+import 'package:my_messenger/providers/post_provider.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/user_model.dart';
 
@@ -120,7 +123,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                       itemBuilder: (context, index) {
                         // Extract post data
                         var postData = posts[index].data() as Map<String, dynamic>;
-
+                        var postsId=posts[index].id;
                         return Card(
                           color: Colors.white,
                           margin: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
@@ -161,6 +164,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                                           );
                                         } else if (snapshot.hasData && snapshot.data != null) {
                                           // When the data is successfully fetched, display the username
+
                                           return Row(
                                             children: [
                                               ClipRRect(
@@ -257,13 +261,17 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    _buildPostAction(Icons.thumb_up_alt_outlined, 'Like', postData['likes'] ?? 0,postData['userId'],(){
+                                    _buildPostAction(Icons.thumb_up_alt_outlined, 'Like', postData['likes'] ?? 0,postsId,(){
                                       debugPrint('Clicked Like');
+                                      var pp=context.read<PostProvider>();
+                                      pp.saveReaction(id: postsId,userId:  postData['userId'],like: true);
                                     }),
-                                    _buildPostAction(Icons.comment_outlined, 'Comment', postData['comments']?.length ?? 0,postData['userId'],(){
+                                    _buildPostAction(Icons.comment_outlined, 'Comment', postData['comments']?.length ?? 0,postsId,(){
                                       debugPrint('Clicked Comment');
+                                      var pp=context.read<PostProvider>();
+                                      pp.saveReaction(id: postsId,userId:  postData['userId'],comment: 'Hello World');
                                     }),
-                                    _buildPostAction(Icons.share_outlined, 'Share', postData['shares'] ?? 0,postData['userId'],(){
+                                    _buildPostAction(Icons.share_outlined, 'Share', postData['shares'] ?? 0,postsId,(){
                                       debugPrint('Clicked Share');
                                     }),
                                   ],
@@ -302,17 +310,16 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
 
 
   }
-  Widget _buildPostAction(IconData icon, String label, int count,String userId,VoidCallback onClick) {
+  Widget _buildPostAction(IconData icon, String label, int count,String postId, VoidCallback onClick) {
+    var pp=context.read<PostProvider>();
     return InkWell(
       onTap: onClick,
       child: Row(
         children: [
           Icon(icon, color: Colors.grey),
           SizedBox(width: 5),
-          Text(
-            '$label ($count)',
-            style: TextStyle(color: Colors.grey),
-          ),
+          FutureBuilder(future: pp.getReactions(label,postId), builder: (context,data)=>Text(data.data==null?'0':data.data.toString()))
+
         ],
       ),
     );
