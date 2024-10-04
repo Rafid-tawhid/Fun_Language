@@ -14,15 +14,11 @@ class PostProvider extends ChangeNotifier{
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
     try {
-      // Generate a new unique reference (for the new collection)
-      String uniqueKey = _firestore.collection('posts').doc().id;  // Unique key for the new document in the 'like' collection
 
-// Prepare the value map you want to associate with the document in the 'like' collection
-      Map<String, dynamic> valueMap = {
-        'field1': uniqueKey,
-        'field2': 'value2',
-        'field3': 'value3',
-      };
+      var data= await _firestore.collection('posts').doc(id).get();
+      await _firestore.collection('posts').doc(id).update({
+        'newKey': 'newValue':{"a":"dd"},  // This will add 'newField': 'newValue' to the document
+      });
 
 
     } catch (e) {
