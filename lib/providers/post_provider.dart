@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 
 class PostProvider extends ChangeNotifier{
-  Future<void> saveReaction({
+  Future<void> saveLikeInfo({
     required String id,
     required String userId,
     bool like = false,
@@ -14,21 +14,16 @@ class PostProvider extends ChangeNotifier{
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
     try {
-      // Create a new document reference with an auto-generated ID
-      DocumentReference docRef = _firestore.collection('reactions').doc();
-      String docId = docRef.id; // Get the generated document ID
+      // Generate a new unique reference (for the new collection)
+      String uniqueKey = _firestore.collection('posts').doc().id;  // Unique key for the new document in the 'like' collection
 
-      // Add the document data along with the docId
-      await docRef.set({
-        'postId': id,
-        'userId': userId,
-        'docId': docId, // Include the generated docId
-        'likes': like,
-        'shares': share,
-        'comments': comment,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
-      print('Data saved successfully with docId: $docId');
+// Prepare the value map you want to associate with the document in the 'like' collection
+      Map<String, dynamic> valueMap = {
+        'field1': uniqueKey,
+        'field2': 'value2',
+        'field3': 'value3',
+      };
+
 
     } catch (e) {
       // Handle errors

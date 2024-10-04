@@ -261,17 +261,17 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    _buildPostAction(Icons.thumb_up_alt_outlined, 'Like', postData['likes'] ?? 0,postsId,(){
+                                    _buildPostAction(Icons.thumb_up_alt_outlined, 'Like',postsId,(){
                                       debugPrint('Clicked Like');
                                       var pp=context.read<PostProvider>();
-                                      pp.saveReaction(id: postsId,userId:  postData['userId'],like: true);
+                                      pp.saveLikeInfo(id: postsId,userId:  postData['userId'],like: true);
                                     }),
-                                    _buildPostAction(Icons.comment_outlined, 'Comment', postData['comments']?.length ?? 0,postsId,(){
+                                    _buildPostAction(Icons.comment_outlined, 'Comment',postsId,(){
                                       debugPrint('Clicked Comment');
                                       var pp=context.read<PostProvider>();
-                                      pp.saveReaction(id: postsId,userId:  postData['userId'],comment: 'Hello World');
+                                     // pp.saveReaction(id: postsId,userId:  postData['userId'],comment: 'Hello World');
                                     }),
-                                    _buildPostAction(Icons.share_outlined, 'Share', postData['shares'] ?? 0,postsId,(){
+                                    _buildPostAction(Icons.share_outlined, 'Share',postsId,(){
                                       debugPrint('Clicked Share');
                                     }),
                                   ],
@@ -310,7 +310,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
 
 
   }
-  Widget _buildPostAction(IconData icon, String label, int count,String postId, VoidCallback onClick) {
+  Widget _buildPostAction(IconData icon, String label,String postId, VoidCallback onClick) {
     var pp=context.read<PostProvider>();
     return InkWell(
       onTap: onClick,
@@ -318,7 +318,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
         children: [
           Icon(icon, color: Colors.grey),
           SizedBox(width: 5),
-          FutureBuilder(future: pp.getReactions(label,postId), builder: (context,data)=>Text(data.data==null?'0':data.data.toString()))
+          // FutureBuilder(future: pp.getReactions(label,postId), builder: (context,data)=>Text(data.data==null?'0':data.data.toString()))
 
         ],
       ),
