@@ -6,6 +6,7 @@ import 'package:my_messenger/main.dart';
 import 'package:my_messenger/providers/post_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../../models/post_models.dart';
 import '../../models/user_model.dart';
 
 class TrafficUpdateScreen extends StatefulWidget {
@@ -86,7 +87,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                 if (_isFocused)Align(
                     alignment: Alignment.centerRight,
                     child: ElevatedButton.icon(
-                      onPressed: _uploadPost,
+                      onPressed: createPost,
                       icon: Icon(Icons.send),
                       label: Text('Post'),
                       style: ElevatedButton.styleFrom(
@@ -342,8 +343,8 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
           'userId': currentUser?.uid ?? 'unknown', // Handle user ID
           'content': content,
           'follow': 'Empty',
-          'likes': 0, // Initialize with 0 likes
-          'shares': 0, // Initialize with 0 shares
+          'likes': [], // Initialize with 0 likes
+          'shares': [], // Initialize with 0 shares
           'comments': [], // Empty comment list for now
           'timestamp': FieldValue.serverTimestamp(), // Firebase server timestamp
         });
@@ -371,4 +372,14 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
     }
   }
 
+
+
+
+  Future<void> createPost() async {
+    var pp=context.read<PostProvider>();
+    var content= _postController.text.trim();
+    if(content.isNotEmpty){
+      pp.createPost(content: content);
+    }
+  }
 }
