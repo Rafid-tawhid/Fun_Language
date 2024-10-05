@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 class PostModel {
   String userId;
+  String postId;
   String content;
   String follow;
   List<LikeModel> likes; // List of LikeModel
@@ -11,6 +12,7 @@ class PostModel {
   PostModel({
     required this.userId,
     required this.content,
+    required this.postId,
     this.follow = 'Empty',
     this.likes = const [],
     this.shares = const [],
@@ -23,6 +25,7 @@ class PostModel {
     return {
       'userId': userId,
       'content': content,
+      'postId': postId,
       'follow': follow,
       'likes': likes.map((like) => like.toMap()).toList(),
       'shares': shares, // assuming shares are userIds
@@ -36,6 +39,7 @@ class PostModel {
     return PostModel(
       userId: map['userId'] ?? 'unknown',
       content: map['content'] ?? '',
+      postId: map['postId'] ?? '',
       follow: map['follow'] ?? 'Empty',
       likes: List<LikeModel>.from(map['likes']?.map((item) => LikeModel.fromMap(item)) ?? []),
       shares: List<String>.from(map['shares'] ?? []),

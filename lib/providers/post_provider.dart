@@ -7,6 +7,7 @@ import 'package:my_messenger/models/user_model.dart';
 import '../models/post_models.dart';
 
 class PostProvider extends ChangeNotifier{
+  List<PostModel> postModelList=[];
   Future<void> saveLikeInfo({
     required String id,
     required String userId,
@@ -76,15 +77,19 @@ class PostProvider extends ChangeNotifier{
     final User? currentUser = _auth.currentUser;
 
     try {
-      // Create a PostModel
+      // Create a document reference with a custom postId
+      DocumentReference documentReference = _firestore.collection('posts').doc();
+
+      // Create a PostModel with the custom postId
       PostModel post = PostModel(
         userId: currentUser?.uid ?? 'unknown', // Ensure userId is set correctly
         content: content,
-        timestamp: DateTime.now(), // Local timestamp, you can also rely on Firestore's serverTimestamp
+        postId: documentReference.id, // Assign the generated ID as postId
+        timestamp: DateTime.now(),
       );
 
-      // Add the post to Firestore (convert to map before saving)
-      await _firestore.collection('posts').add(post.toMap());
+      // Set the post data to the specific document reference
+      await documentReference.set(post.toMap()); // Use set() to use the custom document ID
 
       // Notify listeners to refresh UI if needed
       notifyListeners();
@@ -95,20 +100,24 @@ class PostProvider extends ChangeNotifier{
   }
 
 
-  Future<PostModel?> getPost(String postId) async {
+
+  Future<void> getPost() async {
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
     try {
       // Get the post document from Firestore
-      DocumentSnapshot postSnapshot = await _firestore.collection('posts').doc(postId).get();
+      var postSnapshot = await _firestore.collection('posts').get();
+      postModelList.clear();
+      if (postSnapshot.docs.isNotEmpty) {
 
-      if (postSnapshot.exists) {
-        // Convert the document data into a PostModel
-        Map<String, dynamic> data = postSnapshot.data() as Map<String, dynamic>;
-        PostModel post = PostModel.fromMap(data);
+        for(var i in postSnapshot.docs){
+          postModelList.add(PostModel.fromMap(i.data()));
+        }
+        notifyListeners();
+
+        debugPrint('postModelList ${postModelList.length}');
 
         // Return the PostModel
-        return post;
       } else {
         print('Post not found');
         return null;

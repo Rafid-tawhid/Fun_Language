@@ -42,11 +42,16 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var pp=context.watch<PostProvider>();
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Create Post'),
         surfaceTintColor: Colors.white,
+        actions: [
+          IconButton(onPressed: pp.getPost, icon: Icon(Icons.abc))
+        ],
       ),
       body: GestureDetector(
         onTap: () {
@@ -98,195 +103,194 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                       ),
                     ),
                   ),
+                ListView.builder(
+                  itemCount: pp.postModelList.length,
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    // Extract post data
+                    var postData = pp.postModelList[index];
 
-                StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance.collection('posts').orderBy('timestamp', descending: true).snapshots(),
-                  builder: (context, snapshot) {
-
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator()); // Loading indicator while fetching data
-                    }
-                    if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    }
-
-                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return Center(child: Text('No posts available'));
-                    }
-
-                    // Get the list of posts from Firestore
-                    var posts = snapshot.data!.docs;
-
-
-                    return ListView.builder(
-                      itemCount: posts.length,
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-
-                        // Extract post data
-                        var postData = posts[index].data() as Map<String, dynamic>;
-                        var postsId=posts[index].id;
-                        return Card(
-                          color: Colors.white,
-                          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-                          elevation: 5,
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Column(
+                    return Card(
+                      color: Colors.white,
+                      margin: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                      elevation: 5,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Profile section with user name and time
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Profile section with user name and time
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                   if(postData['userId']!=null) FutureBuilder<DocumentSnapshot>(
-                                      future: FirebaseFirestore.instance.collection('users').doc(postData['userId']).get(),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState == ConnectionState.waiting) {
-                                          // While the data is loading, show a loading indicator
-                                          return Row(
-                                            children: [
-                                              CircularProgressIndicator(), // Show loading indicator
-                                              SizedBox(width: 8), // Space between loading indicator and text
-                                              Text(
-                                                'No username', // Dummy name while loading
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        } else if (snapshot.hasError) {
-                                          // Handle any errors that might occur
-                                          return Text(
-                                            'Error: ${snapshot.error}',
-                                            style: TextStyle(color: Colors.red),
-                                          );
-                                        } else if (snapshot.hasData && snapshot.data != null) {
-                                          // When the data is successfully fetched, display the username
-
-                                          return Row(
-                                            children: [
-                                              ClipRRect(
-                                                borderRadius: BorderRadius.circular(50.0), // Circular image
-                                                child: Image.network(snapshot.data!['image_url']??'https://cdn.vectorstock.com/i/preview-1x/17/61/male-avatar-profile-picture-vector-10211761.jpg',
-                                                  height: 50,
-                                                  width: 50,
-                                                  fit: BoxFit.cover,
-                                                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                                                    // Show an error icon or a placeholder if the image fails to load
-                                                    return Icon(Icons.error, size: 60, color: Colors.red);
-                                                  },
-                                                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                                                    if (loadingProgress == null) {
-                                                      return child; // Show the image once loaded
-                                                    } else {
-                                                      // Show a CircularProgressIndicator while the image is loading
-                                                      return Center(
-                                                        child: CircularProgressIndicator(
-                                                          value: loadingProgress.expectedTotalBytes != null
-                                                              ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
-                                                              : null,
-                                                        ),
-                                                      );
-                                                    }
-                                                  },
-                                                ),
-                                              ),
-                                              SizedBox(width: 10),
-                                              // User name and post time
-                                              Column(
-                                                children: [
-                                                  Text(
-                                                    snapshot.data!['username']?.toString() ?? 'No username', // Use a fallback in case of null
-                                                    style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 16,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    formatTimestamp(postData['timestamp'])?? 'just now',
-                                                    style: TextStyle(color: Colors.grey),
-                                                  ),
-                                                ],
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                              ),
-                                              Spacer(),
-                                              // More options (three dots)
-                                              Icon(Icons.more_horiz),
-
-                                            ],
-                                          );
-                                        } else {
-                                          // If no data is returned, show a default message
-                                          return Text(
-                                            'No user found',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                            ),
-                                          );
-                                        }
-                                      },
-                                    ),
-                                  ],
-                                ),
-
-                                SizedBox(height: 10),
-
-                                // Post content
-                                Text(
-                                  postData['content'] ?? 'No content',
-                                  style: TextStyle(fontSize: 16),
-                                ),
-
-                                // Optional media (image)
-                                if (postData['imageUrl'] != null) ...[
-                                  SizedBox(height: 10),
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    child: Image.network(
-                                      postData['imageUrl'],
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      height: 200,
-                                    ),
+                              Text(
+                                  'No username', // Dummy name while loading
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
                                   ),
-                                ],
-
-                                SizedBox(height: 10),
-                                Divider(),
-
-                                // Like, Comment, Share Row
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    _buildPostAction(Icons.thumb_up_alt_outlined, 'Like',postData, postsId,(){
-                                      debugPrint('Clicked Like');
-                                      var pp=context.read<PostProvider>();
-                                      pp.saveLikeInfo(id: postsId,userId:  postData['userId'],like: true);
-                                    }),
-                                    _buildPostAction(Icons.comment_outlined, 'Comment',postData, postsId,(){
-                                      debugPrint('Clicked Comment');
-                                      var pp=context.read<PostProvider>();
-                                      pp.getLike(postsId,postData['userId']);
-                                    }),
-                                    _buildPostAction(Icons.share_outlined, 'Share',postData, postsId,(){
-                                      debugPrint('Clicked Share');
-                                    }),
-                                  ],
                                 ),
                               ],
                             ),
-                          ),
-                        );
-                      },
+
+                            SizedBox(height: 10),
+
+                            // Post content
+                            Text(
+                              postData.content?? 'No content',
+                              style: TextStyle(fontSize: 16),
+                            ),
+
+                            // Optional media (image)
+                              SizedBox(height: 10),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10.0),
+                                child: Image.network(
+                                  UserModel.image??'',
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: 200,
+                                ),
+                              ),
+
+
+                            SizedBox(height: 10),
+                            Divider(),
+
+                            //Like, Comment, Share Row
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _buildPostAction(Icons.thumb_up_alt_outlined, 'Like',postData, postData.postId,(){
+                                  debugPrint('Clicked Like');
+                                  var pp=context.read<PostProvider>();
+                                // pp.saveLikeInfo(id: postsId,userId:  postData['userId'],like: true);
+                                }),
+                                _buildPostAction(Icons.comment_outlined, 'Comment',postData, postData.postId,(){
+                                  debugPrint('Clicked Comment');
+                                  var pp=context.read<PostProvider>();
+                                 // pp.getPost(postsId,postData['userId']);
+                                }),
+                                _buildPostAction(Icons.share_outlined, 'Share',postData, postData.postId,(){
+                                  debugPrint('Clicked Share');
+                                }),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     );
                   },
                 )
+
+
+
+                // StreamBuilder<QuerySnapshot>(
+                //   stream: pp.getPostStream(),
+                //   builder: (context, snapshot) {
+                //
+                //     if (snapshot.connectionState == ConnectionState.waiting) {
+                //       return Center(child: CircularProgressIndicator()); // Loading indicator while fetching data
+                //     }
+                //     if (snapshot.hasError) {
+                //       return Center(child: Text('Error: ${snapshot.error}'));
+                //     }
+                //
+                //     if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                //       return Center(child: Text('No posts available'));
+                //     }
+                //
+                //     // Get the list of posts from Firestore
+                //     var posts = snapshot.data!.docs;
+                //
+                //
+                //     return ListView.builder(
+                //       itemCount: posts.length,
+                //       shrinkWrap: true,
+                //       physics: NeverScrollableScrollPhysics(),
+                //       itemBuilder: (context, index) {
+                //         // Extract post data
+                //         var postData = posts[index].data() as Map<String, dynamic>;
+                //         var postsId=posts[index].id;
+                //         var pp=context.watch<PostProvider>();
+                //         return Card(
+                //           color: Colors.white,
+                //           margin: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                //           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                //           elevation: 5,
+                //           child: Padding(
+                //             padding: const EdgeInsets.all(12.0),
+                //             child: Column(
+                //               crossAxisAlignment: CrossAxisAlignment.start,
+                //               children: [
+                //                 // Profile section with user name and time
+                //                 Column(
+                //                   crossAxisAlignment: CrossAxisAlignment.start,
+                //                   children: [
+                //                    if(postData['userId']!=null) Text(
+                //                      'No username', // Dummy name while loading
+                //                      style: TextStyle(
+                //                        fontWeight: FontWeight.bold,
+                //                        fontSize: 16,
+                //                      ),
+                //                    ),
+                //                   ],
+                //                 ),
+                //
+                //                 SizedBox(height: 10),
+                //
+                //                 // Post content
+                //                 Text(
+                //                   postData['content'] ?? 'No content',
+                //                   style: TextStyle(fontSize: 16),
+                //                 ),
+                //
+                //                 // Optional media (image)
+                //                 if (postData['imageUrl'] != null) ...[
+                //                   SizedBox(height: 10),
+                //                   ClipRRect(
+                //                     borderRadius: BorderRadius.circular(10.0),
+                //                     child: Image.network(
+                //                       postData['imageUrl'],
+                //                       fit: BoxFit.cover,
+                //                       width: double.infinity,
+                //                       height: 200,
+                //                     ),
+                //                   ),
+                //                 ],
+                //
+                //                 SizedBox(height: 10),
+                //                 Divider(),
+                //
+                //                 // Like, Comment, Share Row
+                //                 Row(
+                //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //                   children: [
+                //                     _buildPostAction(Icons.thumb_up_alt_outlined, 'Like',postData, postsId,(){
+                //                       debugPrint('Clicked Like');
+                //                       var pp=context.read<PostProvider>();
+                //                       pp.saveLikeInfo(id: postsId,userId:  postData['userId'],like: true);
+                //                     }),
+                //                     _buildPostAction(Icons.comment_outlined, 'Comment',postData, postsId,(){
+                //                       debugPrint('Clicked Comment');
+                //                       var pp=context.read<PostProvider>();
+                //                       pp.getPost(postsId,postData['userId']);
+                //                     }),
+                //                     _buildPostAction(Icons.share_outlined, 'Share',postData, postsId,(){
+                //                       debugPrint('Clicked Share');
+                //                     }),
+                //                   ],
+                //                 ),
+                //               ],
+                //             ),
+                //           ),
+                //         );
+                //       },
+                //     );
+                //   },
+                // )
               ],
             ),
           ),
