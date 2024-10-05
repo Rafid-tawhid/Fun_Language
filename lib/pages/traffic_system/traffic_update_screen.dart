@@ -166,7 +166,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                                 _buildPostAction(Icons.thumb_up_alt_outlined, 'Like',postData, postData.postId,(){
                                   debugPrint('Clicked Like');
                                   var pp=context.read<PostProvider>();
-                                // pp.saveLikeInfo(id: postsId,userId:  postData['userId'],like: true);
+                                 pp.saveLikeInfo(id: postData.postId,userId:postData.userId,like: true);
                                 }),
                                 _buildPostAction(Icons.comment_outlined, 'Comment',postData, postData.postId,(){
                                   debugPrint('Clicked Comment');
@@ -326,9 +326,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
           children: [
             Icon(icon, color: Colors.grey),
             SizedBox(width: 5),
-            FutureBuilder(future: pp.getLike(postId, data['userId']),
-                initialData: 'Like',
-                builder: (context,snapshot)=>Text(snapshot.data??'',style: TextStyle(color: snapshot.data=='liked'?Colors.blue:Colors.grey),))
+            Text('$label')
           ],
         ),
       ),
@@ -383,7 +381,9 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
     var pp=context.read<PostProvider>();
     var content= _postController.text.trim();
     if(content.isNotEmpty){
-      pp.createPost(content: content);
+      await pp.createPost(content: content);
+      FocusScope.of(context).unfocus();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Posted successfully')));
     }
   }
 }

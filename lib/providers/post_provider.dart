@@ -8,6 +8,7 @@ import '../models/post_models.dart';
 
 class PostProvider extends ChangeNotifier{
   List<PostModel> postModelList=[];
+  List<LikeModel> likeList=[];
   Future<void> saveLikeInfo({
     required String id,
     required String userId,
@@ -103,7 +104,6 @@ class PostProvider extends ChangeNotifier{
 
   Future<void> getPost() async {
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
     try {
       // Get the post document from Firestore
       var postSnapshot = await _firestore.collection('posts').get();
@@ -113,10 +113,20 @@ class PostProvider extends ChangeNotifier{
         for(var i in postSnapshot.docs){
           postModelList.add(PostModel.fromMap(i.data()));
         }
-        notifyListeners();
+        var likes=await _firestore.collection('posts').get();
 
+        for(var i in likes.docs){
+         // likeList.add(LikeModel.fromMap(i.data()['likes']));
+         var data= await _firestore.collection('posts').doc(i.id).collection('likes').get();
+          // likeList.add(LikeModel.fromMap(data.docs));
+         List<LikeModel> postsLikes = data.docs.map((doc) {
+           return LikeModel.fromMap(doc.data());
+         }).toList();
+         likeList.addAll(postsLikes);
+        }
         debugPrint('postModelList ${postModelList.length}');
-
+        debugPrint('likeList ${likeList.length}');
+        notifyListeners();
         // Return the PostModel
       } else {
         print('Post not found');
