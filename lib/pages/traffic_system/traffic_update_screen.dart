@@ -43,6 +43,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
   @override
   Widget build(BuildContext context) {
     var pp=context.watch<PostProvider>();
+    pp.getPost();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -50,7 +51,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
         title: Text('Create Post'),
         surfaceTintColor: Colors.white,
         actions: [
-          IconButton(onPressed: pp.getPost, icon: Icon(Icons.abc))
+         // IconButton(onPressed: pp.getPost, icon: Icon(Icons.abc))
         ],
       ),
       body: GestureDetector(
@@ -326,7 +327,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
           children: [
             Icon(icon, color: Colors.grey),
             SizedBox(width: 5),
-            Text('$label')
+            FutureBuilder(future: pp.getLike(postId), builder: (context,data)=>Text('${label}'+'data'));
           ],
         ),
       ),

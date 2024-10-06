@@ -35,37 +35,11 @@ class PostProvider extends ChangeNotifier{
   }
 
   // Function to get a like by document ID
-  Future<String> getLike(String postId,String userId) async {
+  Future<String> getLike(String postId) async {
 
-    String text='like';
-    List<Map<String, dynamic>> likesList = [];
-
-    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-    try {
-
-      QuerySnapshot snapshot = await _firestore.collection('posts').doc(postId).collection('likes').get();
-
-      // Iterate through each document in the snapshot
-      for (var doc in snapshot.docs) {
-        // Add each document's data to the likesList
-        likesList.add(doc.data() as Map<String, dynamic>);
-      }
-      for (var data in likesList){
-        if(data['userId']==userId){
-          debugPrint('found ${data['like']}');
-          text='liked';
-        }
-        else {
-          text='like';
-        }
-      }
-        print('Retrieved ${likesList.length} likes for postId: $postId');
-    } catch (e) {
-      print('Error getting likes: $e');
-      text='like';
-    }
-
-    return text;
+    likeList.forEach((e){
+      if(e.)
+    });
   }
 
 
