@@ -34,13 +34,7 @@ class PostProvider extends ChangeNotifier{
     }
   }
 
-  // Function to get a like by document ID
-  Future<String> getLike(String postId) async {
 
-    likeList.forEach((e){
-      if(e.)
-    });
-  }
 
 
 
