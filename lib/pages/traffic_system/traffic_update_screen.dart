@@ -327,7 +327,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
           children: [
             Icon(icon, color: Colors.grey),
             SizedBox(width: 5),
-            FutureBuilder(future: pp.getLike(postId), builder: (context,data)=>Text('${label}'+'data'));
+           // FutureBuilder(future: pp.getLike(postId), builder: (context,data)=>Text('${label}'+'data'));
           ],
         ),
       ),
