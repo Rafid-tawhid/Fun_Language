@@ -7,36 +7,45 @@ import '../models/post_models.dart';
 class PostProvider extends ChangeNotifier{
   List<PostModel> postModelList=[];
   List<LikeModel> likeList=[];
+
   Future<void> saveLikeInfo({
     required String id,
     required String userId,
     bool like = false,
-    String comment = '',
-    int share = 0,
   }) async {
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
     try {
-
-      // var data= await _firestore.collection('posts').doc(id).get();
-      DocumentReference documentReference=_firestore.collection('posts').doc(id).collection('likes').doc();
-      documentReference.set({
-        "docRef":documentReference.id,
-        "userId":userId,
-        "like":like
+      // Add a like to the subcollection 'likes' under the specific post
+      DocumentReference documentReference = _firestore.collection('posts').doc(id).collection('likes').doc();
+      await documentReference.set({
+        "docRef": documentReference.id,
+        "userId": userId,
+        "like": like
       });
-      var getLikesCount=await _firestore.collection('posts').doc(id).get();
-      debugPrint('getLikesCount  ${getLikesCount['like']}');
-      int likes=int.parse(getLikesCount['like'])+1;
-      debugPrint('likes  ${likes}');
-      _firestore.collection('posts').doc(id).update({'like':'$likes'});
+
+      // Fetch the current like count of the post
+      var getLikesCount = await _firestore.collection('posts').doc(id).get();
+      int likes = int.parse(getLikesCount['like']) + 1;
+
+      // Update the like count in Firestore
+      await _firestore.collection('posts').doc(id).update({'like': '$likes'});
+
+      // Update the like count in the postModelList
+      postModelList = postModelList.map((post) {
+        if (post.postId == id) {
+          return post.updatePostModel(post, {'like': likes.toString()});
+        }
+        return post;
+      }).toList();
+
+      notifyListeners();
 
     } catch (e) {
       // Handle errors
-      print('Error uploading post: $e');
+      print('Error uploading like info: $e');
     }
   }
-
 
 
 

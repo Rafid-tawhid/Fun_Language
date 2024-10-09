@@ -5,7 +5,6 @@ class PostModel {
   String content;
   String follow;
   String like;
-// List of LikeModel
   String share; // Assuming shares are user IDs who shared the post
   String comment; // List of CommentModel
   DateTime? timestamp;
@@ -21,7 +20,6 @@ class PostModel {
     this.timestamp,
   });
 
-  // Convert PostModel to a map (for Firestore)
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,
@@ -48,6 +46,32 @@ class PostModel {
       timestamp: map['timestamp'] != null ? (map['timestamp'] as Timestamp).toDate() : null,
     );
   }
+
+  PostModel updatePostModel(PostModel post, Map<String, dynamic> updatedData) {
+    // Update the fields in the PostModel based on the map
+    if (updatedData.containsKey('content')) {
+      post.content = updatedData['content'];
+    }
+    if (updatedData.containsKey('follow')) {
+      post.follow = updatedData['follow'];
+    }
+    if (updatedData.containsKey('like')) {
+      post.like = updatedData['like'];
+    }
+    if (updatedData.containsKey('share')) {
+      post.share = updatedData['share'];
+    }
+    if (updatedData.containsKey('comment')) {
+      post.comment = updatedData['comment'];
+    }
+    if (updatedData.containsKey('timestamp')) {
+      post.timestamp = updatedData['timestamp'];
+    }
+
+    // Return the updated PostModel
+    return post;
+  }
+
 }
 class LikeModel {
   String docRef;
