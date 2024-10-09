@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:my_messenger/models/user_model.dart';
 
 import '../models/post_models.dart';
 
@@ -27,6 +25,11 @@ class PostProvider extends ChangeNotifier{
         "userId":userId,
         "like":like
       });
+      var getLikesCount=await _firestore.collection('posts').doc(id).get();
+      debugPrint('getLikesCount  ${getLikesCount['like']}');
+      int likes=int.parse(getLikesCount['like'])+1;
+      debugPrint('likes  ${likes}');
+      _firestore.collection('posts').doc(id).update({'like':'$likes'});
 
     } catch (e) {
       // Handle errors
@@ -76,6 +79,7 @@ class PostProvider extends ChangeNotifier{
       // Get the post document from Firestore
       var postSnapshot = await _firestore.collection('posts').get();
       postModelList.clear();
+      likeList.clear();
       if (postSnapshot.docs.isNotEmpty) {
 
         for(var i in postSnapshot.docs){

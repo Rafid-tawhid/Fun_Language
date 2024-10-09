@@ -4,9 +4,10 @@ class PostModel {
   String postId;
   String content;
   String follow;
-  List<LikeModel> likes; // List of LikeModel
-  List<String> shares; // Assuming shares are user IDs who shared the post
-  List<CommentModel> comments; // List of CommentModel
+  String like;
+// List of LikeModel
+  String share; // Assuming shares are user IDs who shared the post
+  String comment; // List of CommentModel
   DateTime? timestamp;
 
   PostModel({
@@ -14,9 +15,9 @@ class PostModel {
     required this.content,
     required this.postId,
     this.follow = 'Empty',
-    this.likes = const [],
-    this.shares = const [],
-    this.comments = const [],
+    this.like = '0',
+    this.share = '0',
+    this.comment = '0',
     this.timestamp,
   });
 
@@ -27,9 +28,9 @@ class PostModel {
       'content': content,
       'postId': postId,
       'follow': follow,
-      'likes': likes.map((like) => like.toMap()).toList(),
-      'shares': shares, // assuming shares are userIds
-      'comments': comments.map((comment) => comment.toMap()).toList(),
+      'like': like,
+      'share': share, // assuming shares are userIds
+      'comment': comment,
       'timestamp': timestamp != null ? Timestamp.fromDate(timestamp!) : FieldValue.serverTimestamp(),
     };
   }
@@ -41,9 +42,9 @@ class PostModel {
       content: map['content'] ?? '',
       postId: map['postId'] ?? '',
       follow: map['follow'] ?? 'Empty',
-      likes: List<LikeModel>.from(map['likes']?.map((item) => LikeModel.fromMap(item)) ?? []),
-      shares: List<String>.from(map['shares'] ?? []),
-      comments: List<CommentModel>.from(map['comments']?.map((item) => CommentModel.fromMap(item)) ?? []),
+      like: map['like'] ?? '',
+      share: map['share'] ?? '',
+      comment: map['comment'] ?? '',
       timestamp: map['timestamp'] != null ? (map['timestamp'] as Timestamp).toDate() : null,
     );
   }

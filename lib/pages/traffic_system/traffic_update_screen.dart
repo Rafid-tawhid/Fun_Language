@@ -30,6 +30,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
         _isFocused = _focusNode.hasFocus;
       });
     });
+   getAllPost();
   }
 
   @override
@@ -42,8 +43,6 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var pp=context.watch<PostProvider>();
-    pp.getPost();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -60,7 +59,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
         },
         child: Padding(
           padding: const EdgeInsets.all(12.0),
-          child: SingleChildScrollView(
+          child: Consumer<PostProvider>(builder: (context,pp,_)=>SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -91,19 +90,19 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                 ),
                 SizedBox(height: 10),
                 if (_isFocused)Align(
-                    alignment: Alignment.centerRight,
-                    child: ElevatedButton.icon(
-                      onPressed: createPost,
-                      icon: Icon(Icons.send),
-                      label: Text('Post'),
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton.icon(
+                    onPressed: createPost,
+                    icon: Icon(Icons.send),
+                    label: Text('Post'),
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
                     ),
                   ),
+                ),
                 ListView.builder(
                   itemCount: pp.postModelList.length,
                   shrinkWrap: true,
@@ -126,7 +125,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                              Text(
+                                Text(
                                   'No username', // Dummy name while loading
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
@@ -145,16 +144,16 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                             ),
 
                             // Optional media (image)
-                              SizedBox(height: 10),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(10.0),
-                                child: Image.network(
-                                  UserModel.image??'',
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: 200,
-                                ),
+                            SizedBox(height: 10),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: Image.network(
+                                UserModel.image??'',
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: 200,
                               ),
+                            ),
 
 
                             SizedBox(height: 10),
@@ -167,12 +166,12 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                                 _buildPostAction(Icons.thumb_up_alt_outlined, 'Like',postData, postData.postId,(){
                                   debugPrint('Clicked Like');
                                   var pp=context.read<PostProvider>();
-                                 pp.saveLikeInfo(id: postData.postId,userId:postData.userId,like: true);
+                                  pp.saveLikeInfo(id: postData.postId,userId:postData.userId,like: true);
                                 }),
                                 _buildPostAction(Icons.comment_outlined, 'Comment',postData, postData.postId,(){
                                   debugPrint('Clicked Comment');
                                   var pp=context.read<PostProvider>();
-                                 // pp.getPost(postsId,postData['userId']);
+                                  // pp.getPost(postsId,postData['userId']);
                                 }),
                                 _buildPostAction(Icons.share_outlined, 'Share',postData, postData.postId,(){
                                   debugPrint('Clicked Share');
@@ -294,7 +293,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                 // )
               ],
             ),
-          ),
+          )),
         ),
       ),
     );
@@ -318,7 +317,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
 
 
   }
-  Widget _buildPostAction(IconData icon, String label,dynamic data,String postId, VoidCallback onClick) {
+  Widget _buildPostAction(IconData icon, String label,PostModel data,String postId, VoidCallback onClick) {
     var pp=context.read<PostProvider>();
     return InkWell(
       onTap: onClick,
@@ -327,7 +326,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
           children: [
             Icon(icon, color: Colors.grey),
             SizedBox(width: 5),
-           // FutureBuilder(future: pp.getLike(postId), builder: (context,data)=>Text('${label}'+'data'));
+            Text('${label}'+' (${data.like})')
           ],
         ),
       ),
@@ -386,5 +385,10 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
       FocusScope.of(context).unfocus();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Posted successfully')));
     }
+  }
+
+  void getAllPost() {
+    var pp=context.read<PostProvider>();
+    pp.getPost();
   }
 }
