@@ -16,18 +16,38 @@ class PostProvider extends ChangeNotifier{
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
     try {
-      // Add a like to the subcollection 'likes' under the specific post
-      DocumentReference documentReference = _firestore.collection('posts').doc(id).collection('likes').doc();
-      await documentReference.set({
-        "docRef": documentReference.id,
-        "userId": userId,
-        "like": like
-      });
 
-      // Fetch the current like count of the post
-      var getLikesCount = await _firestore.collection('posts').doc(id).get();
-      int likes = int.parse(getLikesCount['like']) + 1;
+      int likes=0;
 
+      QuerySnapshot allLikesOfThatPost=await _firestore.collection('posts').doc(id).collection('likes').where('userId',isEqualTo: userId).get();
+     if(allLikesOfThatPost.docs.length>0){
+       QuerySnapshot querySnapshot = await _firestore
+           .collection('posts')
+           .doc(id)
+           .collection('likes')
+           .where('userId', isEqualTo: userId)
+           .get();
+
+// Loop through the documents and delete each one from the correct path
+       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+         await _firestore
+             .collection('posts')
+             .doc(id)
+             .collection('likes')
+             .doc(doc.id)
+             .delete();  // Ensure you're deleting from the same collection where you're querying from
+         debugPrint('Deleted document with ID: ${doc.id}');
+       }
+
+       var getLikesCount = await _firestore.collection('posts').doc(id).get();
+      likes = int.parse(getLikesCount['like']) - 1;
+     }
+     else {
+       DocumentReference docRef=_firestore.collection('posts').doc(id).collection('likes').doc();
+       docRef.set(LikeModel(docRef: docRef.id, userId: userId??'', like: true).toMap());
+       var getLikesCount = await _firestore.collection('posts').doc(id).get();
+       likes = int.parse(getLikesCount['like']) + 1;
+     }
       // Update the like count in Firestore
       await _firestore.collection('posts').doc(id).update({'like': '$likes'});
 
@@ -71,8 +91,6 @@ class PostProvider extends ChangeNotifier{
 
       // Set the post data to the specific document reference
       await documentReference.set(post.toMap()); // Use set() to use the custom document ID
-      DocumentReference docRef=_firestore.collection('posts').doc(documentReference.id).collection('likes').doc();
-      docRef.set(LikeModel(docRef: docRef.id, userId: currentUser?.uid??'', like: true).toMap());
 
       // Notify listeners to refresh UI if needed
       notifyListeners();
