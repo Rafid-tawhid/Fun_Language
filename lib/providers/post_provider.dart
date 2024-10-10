@@ -71,6 +71,8 @@ class PostProvider extends ChangeNotifier{
 
       // Set the post data to the specific document reference
       await documentReference.set(post.toMap()); // Use set() to use the custom document ID
+      DocumentReference docRef=_firestore.collection('posts').doc(documentReference.id).collection('likes').doc();
+      docRef.set(LikeModel(docRef: docRef.id, userId: currentUser?.uid??'', like: true).toMap());
 
       // Notify listeners to refresh UI if needed
       notifyListeners();
