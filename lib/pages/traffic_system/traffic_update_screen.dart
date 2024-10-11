@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:my_messenger/main.dart';
+import 'package:my_messenger/pages/traffic_system/widgets/image_picker.dart';
 import 'package:my_messenger/providers/post_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -86,6 +87,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                         ),
                       ),
                     ),
+                    ImagePickerWidget()
                   ],
                 ),
                 SizedBox(height: 10),
@@ -126,7 +128,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'No username', // Dummy name while loading
+                                  postData.username, // Dummy name while loading
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
@@ -166,7 +168,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                                 _buildPostAction(Icons.thumb_up_alt_outlined, 'Like',postData, postData.postId,(){
                                   debugPrint('Clicked Like');
                                   var pp=context.read<PostProvider>();
-                                  pp.saveLikeInfo(id: postData.postId,userId:postData.userId,like: true);
+                                  pp.saveLikeInfo(id: postData.postId,userId:FirebaseAuth.instance.currentUser!.uid,like: true);
                                 }),
                                 _buildPostAction(Icons.comment_outlined, 'Comment',postData, postData.postId,(){
                                   debugPrint('Clicked Comment');

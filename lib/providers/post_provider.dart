@@ -18,7 +18,7 @@ class PostProvider extends ChangeNotifier{
 
     try {
 
-      int likes=0;
+      int? likes;
 
       QuerySnapshot allLikesOfThatPost=await _firestore.collection('posts').doc(id).collection('likes').where('userId',isEqualTo: userId).get();
      if(allLikesOfThatPost.docs.length>0){

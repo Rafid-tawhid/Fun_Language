@@ -69,6 +69,7 @@ dependencies:
   camera:
   gal: ^2.3.0
   flutter_rating_bar: ^4.0.0
+  
 
 
 
