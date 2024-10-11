@@ -4,6 +4,7 @@ class PostModel {
   String postId;
   String content;
   String follow;
+  String username;
   String like;
   String share; // Assuming shares are user IDs who shared the post
   String comment; // List of CommentModel
@@ -13,6 +14,7 @@ class PostModel {
     required this.userId,
     required this.content,
     required this.postId,
+    required this.username,
     this.follow = 'Empty',
     this.like = '0',
     this.share = '0',
@@ -26,6 +28,7 @@ class PostModel {
       'content': content,
       'postId': postId,
       'follow': follow,
+      'username': username,
       'like': like,
       'share': share, // assuming shares are userIds
       'comment': comment,
@@ -40,6 +43,7 @@ class PostModel {
       content: map['content'] ?? '',
       postId: map['postId'] ?? '',
       follow: map['follow'] ?? 'Empty',
+      username: map['username'] ?? 'No name',
       like: map['like'] ?? '',
       share: map['share'] ?? '',
       comment: map['comment'] ?? '',

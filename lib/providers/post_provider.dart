@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:my_messenger/models/user_model.dart';
 
 import '../models/post_models.dart';
 
@@ -85,6 +86,7 @@ class PostProvider extends ChangeNotifier{
       PostModel post = PostModel(
         userId: currentUser?.uid ?? 'unknown', // Ensure userId is set correctly
         content: content,
+        username: UserModel.name??'No name',
         postId: documentReference.id, // Assign the generated ID as postId
         timestamp: DateTime.now(),
       );
