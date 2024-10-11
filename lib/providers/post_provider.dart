@@ -1,13 +1,18 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cross_file/src/types/interface.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:my_messenger/models/user_model.dart';
-
 import '../models/post_models.dart';
+import 'package:image_picker/image_picker.dart';
+
 
 class PostProvider extends ChangeNotifier{
   List<PostModel> postModelList=[];
   List<LikeModel> likeList=[];
+  List<File> uploadImageList=[];
 
   Future<void> saveLikeInfo({
     required String id,
@@ -139,6 +144,21 @@ class PostProvider extends ChangeNotifier{
       print('Error getting post: $e');
       return null;
     }
+  }
+
+  void saveToImageList(File pickedFile) {
+    uploadImageList.add(pickedFile);
+    notifyListeners();
+  }
+
+  void clearImageList({int? index}){
+    if(index!=null){
+      uploadImageList.remove(index);
+    }
+    else {
+      uploadImageList.clear();
+    }
+    notifyListeners();
   }
 
 

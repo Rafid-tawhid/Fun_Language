@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -91,8 +93,27 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                   ],
                 ),
                 SizedBox(height: 10),
+                SizedBox(
+                  height: 60,
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Consumer<PostProvider>(
+                            builder: (context,pp,_)=>pp.uploadImageList.length>0?
+                            ListView.builder(
+                              itemCount: pp.uploadImageList.length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context,index)=>Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Image.file(pp.uploadImageList[index],height: 60,width: 60,fit: BoxFit.cover,),
+                              ),
+                            ):SizedBox.shrink(),
+                          )),
+                    ],
+                  ),
+                ),
                 if (_isFocused)Align(
-                  alignment: Alignment.centerRight,
+                  alignment: Alignment.bottomRight,
                   child: ElevatedButton.icon(
                     onPressed: createPost,
                     icon: Icon(Icons.send),

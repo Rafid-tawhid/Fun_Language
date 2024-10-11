@@ -10,6 +10,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+
 
     <!-- Intent queries -->
     <queries>
@@ -22,6 +24,7 @@
         android:label="Fun Language"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
+        android:requestLegacyExternalStorage="true"
         tools:replace="android:icon, android:label">
 
         <activity

@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:my_messenger/providers/post_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
 class ImagePickerWidget extends StatefulWidget {
   @override
@@ -18,9 +20,11 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
     if (source == ImageSource.camera) {
       if (await _requestCameraPermission()) {
         final pickedFile = await _picker.pickImage(source: source);
-        // setState(() {
-        //   _imageFile = pickedFile;
-        // });
+
+        if(pickedFile!=null){
+          var pp=context.read<PostProvider>();
+          pp.saveToImageList(File(pickedFile.path));
+        }
 
       } else {
         // Handle camera permission denied
@@ -29,9 +33,10 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
     } else if (source == ImageSource.gallery) {
       if (await _requestGalleryPermission()) {
         final pickedFile = await _picker.pickImage(source: source);
-        // setState(() {
-        //   _imageFile = pickedFile;
-        // });
+        if(pickedFile!=null){
+          var pp=context.read<PostProvider>();
+          pp.saveToImageList(File(pickedFile.path));
+        }
       } else {
         // Handle gallery permission denied
         _showPermissionDeniedMessage('Gallery');
@@ -50,11 +55,12 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
 
   // Request gallery permission
   Future<bool> _requestGalleryPermission() async {
-    var status = await Permission.photos.status;
+    //var status = await Permission.photos.status;
+    var status = await Permission.storage.request();
     if (status.isDenied) {
-      status = await Permission.photos.request();
+      status = await Permission.storage.request();
     }
-    return status.isGranted;
+    return true;
   }
 
   // Show alert to choose camera or gallery
