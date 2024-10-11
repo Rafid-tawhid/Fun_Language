@@ -19,7 +19,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
     // Check permission
     if (source == ImageSource.camera) {
       if (await _requestCameraPermission()) {
-        final pickedFile = await _picker.pickImage(source: source);
+        final pickedFile = await _picker.pickImage(source: source,imageQuality: 50,maxWidth: 150);
 
         if(pickedFile!=null){
           var pp=context.read<PostProvider>();
@@ -32,7 +32,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
       }
     } else if (source == ImageSource.gallery) {
       if (await _requestGalleryPermission()) {
-        final pickedFile = await _picker.pickImage(source: source);
+        final pickedFile= await ImagePicker().pickImage(source: ImageSource.gallery,imageQuality: 50,maxWidth: 150);
         if(pickedFile!=null){
           var pp=context.read<PostProvider>();
           pp.saveToImageList(File(pickedFile.path));

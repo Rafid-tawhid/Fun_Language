@@ -105,7 +105,16 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                               scrollDirection: Axis.horizontal,
                               itemBuilder: (context,index)=>Padding(
                                 padding: const EdgeInsets.all(4.0),
-                                child: Image.file(pp.uploadImageList[index],height: 60,width: 60,fit: BoxFit.cover,),
+                                child: Stack(
+                                  children: [
+                                    Image.file(pp.uploadImageList[index],height: 60,width: 60,fit: BoxFit.cover,),
+                                    Positioned(right: 0,top: 0,child: InkWell(
+                                        onTap: (){
+                                          pp.clearImageList(index: index);
+                                        },
+                                        child: Icon(Icons.close)),)
+                                  ],
+                                ),
                               ),
                             ):SizedBox.shrink(),
                           )),

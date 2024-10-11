@@ -152,12 +152,14 @@ class PostProvider extends ChangeNotifier{
   }
 
   void clearImageList({int? index}){
+    debugPrint('index ${index}');
     if(index!=null){
-      uploadImageList.remove(index);
+      uploadImageList.removeAt(index);
     }
     else {
       uploadImageList.clear();
     }
+    debugPrint('clearImageList ${uploadImageList.length}');
     notifyListeners();
   }
 
