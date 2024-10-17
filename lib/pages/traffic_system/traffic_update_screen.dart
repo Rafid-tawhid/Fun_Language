@@ -123,14 +123,16 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                 ),
                 if (_isFocused)Align(
                   alignment: Alignment.bottomRight,
-                  child: ElevatedButton.icon(
-                    onPressed: createPost,
-                    icon: Icon(Icons.send),
-                    label: Text('Post'),
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                  child: Consumer<PostProvider>(
+                    builder: (context,pro,_)=>ElevatedButton.icon(
+                      onPressed: pro.isLoading?null:createPost,
+                      icon: Icon(Icons.send),
+                      label: pro.isLoading?CircularProgressIndicator():Text('Post'),
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
                     ),
                   ),
@@ -177,15 +179,20 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
 
                             // Optional media (image)
                             SizedBox(height: 10),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10.0),
-                              child: Image.network(
-                                UserModel.image??'',
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: 200,
+
+                            Visibility(
+                              visible: postData.imageUrls != null && postData.imageUrls!.isNotEmpty,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10.0),
+                                child: Image.network(
+                                  postData.imageUrls?[0] ?? '',  // Use null-aware access
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: 200,
+                                ),
                               ),
                             ),
+
 
 
                             SizedBox(height: 10),
@@ -413,9 +420,13 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
     var pp=context.read<PostProvider>();
     var content= _postController.text.trim();
     if(content.isNotEmpty){
-      await pp.createPost(content: content);
-      FocusScope.of(context).unfocus();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Posted successfully')));
+      Future.microtask(() async {
+        await pp.createPost(content: content);
+        FocusScope.of(context).unfocus();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Posted successfully')));
+      });
+
+
     }
   }
 

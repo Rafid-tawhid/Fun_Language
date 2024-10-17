@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cross_file/src/types/interface.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:my_messenger/models/user_model.dart';
 import '../models/post_models.dart';
@@ -13,6 +14,7 @@ class PostProvider extends ChangeNotifier{
   List<PostModel> postModelList=[];
   List<LikeModel> likeList=[];
   List<File> uploadImageList=[];
+  bool isLoading=false;
 
   Future<void> saveLikeInfo({
     required String id,
@@ -77,13 +79,31 @@ class PostProvider extends ChangeNotifier{
 
 
   Future<void> createPost({
-    required String content,
+    required String content, // List of image files
   }) async {
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     final FirebaseAuth _auth = FirebaseAuth.instance;
     final User? currentUser = _auth.currentUser;
+    final FirebaseStorage _storage = FirebaseStorage.instance;
+    List<String> imageUrls = [];
 
     try {
+      // Upload images and get their download URLs
+
+      setLoading(true);
+      if(uploadImageList.isNotEmpty){
+        for (File imageFile in uploadImageList) {
+          String fileName = DateTime.now().millisecondsSinceEpoch.toString(); // Generate a unique file name
+          Reference ref = _storage.ref().child('posts/${currentUser?.uid}/$fileName');
+          // Upload the image file
+          UploadTask uploadTask = ref.putFile(imageFile);
+          TaskSnapshot taskSnapshot = await uploadTask;
+          // Get the download URL
+          String downloadUrl = await taskSnapshot.ref.getDownloadURL();
+          imageUrls.add(downloadUrl); // Add the URL to the list
+        }
+      }
+
       // Create a document reference with a custom postId
       DocumentReference documentReference = _firestore.collection('posts').doc();
 
@@ -91,22 +111,25 @@ class PostProvider extends ChangeNotifier{
       PostModel post = PostModel(
         userId: currentUser?.uid ?? 'unknown', // Ensure userId is set correctly
         content: content,
-        username: UserModel.name??'No name',
+        username: UserModel.name ?? 'No name',
         postId: documentReference.id, // Assign the generated ID as postId
         timestamp: DateTime.now(),
+        imageUrls: imageUrls, // Add the list of image URLs
       );
 
       // Set the post data to the specific document reference
-      await documentReference.set(post.toMap()); // Use set() to use the custom document ID
+      await documentReference.set(post.toMap());
 
       // Notify listeners to refresh UI if needed
-      notifyListeners();
+
     } catch (e) {
       // Handle errors
       print('Error creating post: $e');
     }
+    finally {
+      setLoading(false);
+    }
   }
-
 
 
   Future<void> getPost() async {
@@ -160,6 +183,11 @@ class PostProvider extends ChangeNotifier{
       uploadImageList.clear();
     }
     debugPrint('clearImageList ${uploadImageList.length}');
+    notifyListeners();
+  }
+
+  void setLoading(bool bool) {
+    isLoading=bool;
     notifyListeners();
   }
 

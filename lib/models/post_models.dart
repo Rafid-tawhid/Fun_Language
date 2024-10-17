@@ -9,6 +9,7 @@ class PostModel {
   String share; // Assuming shares are user IDs who shared the post
   String comment; // List of CommentModel
   DateTime? timestamp;
+  List<String>? imageUrls;
 
   PostModel({
     required this.userId,
@@ -20,6 +21,7 @@ class PostModel {
     this.share = '0',
     this.comment = '0',
     this.timestamp,
+    this.imageUrls
   });
 
   Map<String, dynamic> toMap() {
@@ -33,6 +35,7 @@ class PostModel {
       'share': share, // assuming shares are userIds
       'comment': comment,
       'timestamp': timestamp != null ? Timestamp.fromDate(timestamp!) : FieldValue.serverTimestamp(),
+      'imageUrls': imageUrls
     };
   }
 
@@ -44,10 +47,11 @@ class PostModel {
       postId: map['postId'] ?? '',
       follow: map['follow'] ?? 'Empty',
       username: map['username'] ?? 'No name',
-      like: map['like'] ?? '',
-      share: map['share'] ?? '',
-      comment: map['comment'] ?? '',
+      like: map['like'] ?? '0',
+      share: map['share'] ?? '0',
+      comment: map['comment'] ?? '0',
       timestamp: map['timestamp'] != null ? (map['timestamp'] as Timestamp).toDate() : null,
+      imageUrls: map['imageUrls'] != null ? List<String>.from(map['imageUrls']) : null, // Cast the list explicitly
     );
   }
 
