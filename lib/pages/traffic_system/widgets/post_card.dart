@@ -5,6 +5,7 @@ import 'package:my_messenger/models/post_models.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/post_provider.dart';
+import 'images_show.dart';
 
 class PostCard extends StatelessWidget {
   final PostModel postData;
@@ -49,20 +50,7 @@ class PostCard extends StatelessWidget {
             // Optional media (image)
             SizedBox(height: 10),
 
-            Visibility(
-              visible: postData.imageUrls != null && postData.imageUrls!.isNotEmpty,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10.0),
-                child: Image.network(
-                  postData.imageUrls?[0] ?? '',  // Use null-aware access
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: 200,
-                ),
-              ),
-            ),
-
-
+            PostImageWidget(imageUrls: postData.imageUrls??[],),
 
             SizedBox(height: 10),
             Divider(),
@@ -81,7 +69,7 @@ class PostCard extends StatelessWidget {
                       children: [
                         Icon(Icons.thumb_up_alt_outlined, color: Colors.grey),
                         SizedBox(width: 5),
-                        Text('Like'+' (${0})')
+                        Text('Like'+' (${postData.like})')
                       ],
                     ),
                   ),

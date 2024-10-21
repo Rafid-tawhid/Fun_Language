@@ -8,6 +8,7 @@ import 'package:my_messenger/main.dart';
 import 'package:my_messenger/pages/traffic_system/widgets/image_picker.dart';
 import 'package:my_messenger/pages/traffic_system/widgets/post_card.dart';
 import 'package:my_messenger/providers/post_provider.dart';
+import 'package:my_messenger/utils/temp_db.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/post_models.dart';
@@ -94,41 +95,49 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                   ],
                 ),
                 SizedBox(height: 10),
-                SizedBox(
-                  height: 60,
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child: Consumer<PostProvider>(
-                            builder: (context,pp,_)=>pp.uploadImageList.length>0?
-                            ListView.builder(
-                              itemCount: pp.uploadImageList.length,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context,index)=>Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Stack(
-                                  children: [
-                                    Image.file(pp.uploadImageList[index],height: 60,width: 60,fit: BoxFit.cover,),
-                                    Positioned(right: 0,top: 0,child: InkWell(
-                                        onTap: (){
-                                          pp.clearImageList(index: index);
-                                        },
-                                        child: Icon(Icons.close)),)
-                                  ],
+
+                Consumer<PostProvider>(
+                  builder: (context,pp,_)=>Visibility(
+                    visible: pp.uploadImageList.length>0,
+                    child: SizedBox(
+                      height: 60,
+                      child: Row(
+                        children: [
+                          Expanded(
+                              child: pp.uploadImageList.length>0?
+                              ListView.builder(
+                                itemCount: pp.uploadImageList.length,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context,index)=>Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Stack(
+                                    children: [
+                                      Image.file(pp.uploadImageList[index],height: 60,width: 60,fit: BoxFit.cover,),
+                                      Positioned(right: 0,top: 0,child: InkWell(
+                                          onTap: (){
+                                            pp.clearImageList(index: index);
+                                          },
+                                          child: Icon(Icons.close)),)
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ):SizedBox.shrink(),
-                          )),
-                    ],
+                              ):SizedBox.shrink()),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
+
                 if (_isFocused)Align(
                   alignment: Alignment.bottomRight,
                   child: Consumer<PostProvider>(
                     builder: (context,pro,_)=>ElevatedButton.icon(
                       onPressed: pro.isLoading?null:createPost,
                       icon: Icon(Icons.send),
-                      label: pro.isLoading?CircularProgressIndicator():Text('Post'),
+                      label: pro.isLoading?Container(
+                          height: 16,
+                          width: 16,
+                          child: CircularProgressIndicator(color: Colors.grey,)):Text('Post'),
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                         shape: RoundedRectangleBorder(
@@ -185,6 +194,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
     if(content.isNotEmpty){
       Future.microtask(() async {
         await pp.createPost(content: content);
+        pp.clearImageList();
         FocusScope.of(context).unfocus();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Posted successfully')));
       });

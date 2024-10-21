@@ -136,7 +136,7 @@ class PostProvider extends ChangeNotifier{
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     try {
       // Get the post document from Firestore
-      var postSnapshot = await _firestore.collection('posts').get();
+      var postSnapshot = await _firestore.collection('posts').orderBy('timestamp', descending: true).get();
       postModelList.clear();
       likeList.clear();
       if (postSnapshot.docs.isNotEmpty) {
