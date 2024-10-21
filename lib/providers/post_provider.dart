@@ -120,6 +120,10 @@ class PostProvider extends ChangeNotifier{
       // Set the post data to the specific document reference
       await documentReference.set(post.toMap());
 
+      //add data to list first
+
+      postModelList.insert(0,post);
+
       // Notify listeners to refresh UI if needed
 
     } catch (e) {
@@ -130,6 +134,10 @@ class PostProvider extends ChangeNotifier{
       setLoading(false);
     }
   }
+
+
+
+
 
 
   Future<void> getPost() async {
