@@ -7,11 +7,19 @@ import 'package:provider/provider.dart';
 import '../../../providers/post_provider.dart';
 import 'images_show.dart';
 
-class PostCard extends StatelessWidget {
+class PostCard extends StatefulWidget {
   final PostModel postData;
 
 
   PostCard(this.postData);
+
+  @override
+  State<PostCard> createState() => _PostCardState();
+}
+
+class _PostCardState extends State<PostCard> {
+
+  bool showCommentBox=false;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +38,7 @@ class PostCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  postData.username, // Dummy name while loading
+                  widget.postData.username, // Dummy name while loading
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -43,14 +51,14 @@ class PostCard extends StatelessWidget {
 
             // Post content
             Text(
-              postData.content?? 'No content',
+              widget.postData.content?? 'No content',
               style: TextStyle(fontSize: 16),
             ),
 
             // Optional media (image)
             SizedBox(height: 10),
 
-            PostImageWidget(imageUrls: postData.imageUrls??[],),
+            PostImageWidget(imageUrls: widget.postData.imageUrls??[],),
 
             SizedBox(height: 10),
             Divider(),
@@ -61,7 +69,7 @@ class PostCard extends StatelessWidget {
                   child: InkWell(
                     onTap:(){
                       var pp=context.read<PostProvider>();
-                      pp.saveLikeInfo(id: postData.postId,userId:FirebaseAuth.instance.currentUser!.uid,like: true);
+                      pp.saveLikeInfo(id: widget.postData.postId,userId:FirebaseAuth.instance.currentUser!.uid,like: true);
                     },
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -69,14 +77,18 @@ class PostCard extends StatelessWidget {
                       children: [
                         Icon(Icons.thumb_up_alt_outlined, color: Colors.grey),
                         SizedBox(width: 5),
-                        Text('Like'+' (${postData.like})')
+                        Text('Like'+' (${widget.postData.like})')
                       ],
                     ),
                   ),
                 ),
                 Expanded(
                   child: InkWell(
-                    onTap:(){},
+                    onTap:(){
+                      setState(() {
+                        showCommentBox=!showCommentBox;
+                      });
+                    },
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -93,7 +105,7 @@ class PostCard extends StatelessWidget {
                   child: InkWell(
                     onTap:(){
                       var pp=context.read<PostProvider>();
-                      pp.saveLikeInfo(id: postData.postId,userId:FirebaseAuth.instance.currentUser!.uid,like: true);
+                      pp.saveLikeInfo(id: widget.postData.postId,userId:FirebaseAuth.instance.currentUser!.uid,like: true);
                     },
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -108,6 +120,7 @@ class PostCard extends StatelessWidget {
                 )
               ],
             ),
+            if(showCommentBox)ChatInputField(onSend: () {  },)
           ],
         ),
       ),
@@ -115,18 +128,65 @@ class PostCard extends StatelessWidget {
   }
 }
 
-Widget _buildPostAction(IconData icon, String label,PostModel data,String postId,BuildContext context, VoidCallback onClick,) {
-  var pp=context.read<PostProvider>();
-  return InkWell(
-    onTap: onClick,
-    child: Container(
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.grey),
-          SizedBox(width: 5),
-          Text('${label}'+' (${data.like})')
-        ],
+
+class ChatInputField extends StatelessWidget {
+  final TextEditingController controller = TextEditingController();
+  final VoidCallback onSend;
+
+  ChatInputField({required this.onSend});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+        height: 40,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Colors.white, // background color
+          borderRadius: BorderRadius.circular(12), // rounded borders
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: Offset(0, 3), // shadow direction
+            ),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  hintText: "Type a comment...",
+                  border: InputBorder.none, // remove underline
+                ),
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+            SizedBox(width: 8), // space between text field and icon
+            GestureDetector(
+              onTap: onSend, // trigger send action
+              child: Container(
+                padding: EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.blue, // background color of the send button
+                ),
+                child: Icon(
+                  Icons.send,
+                  color: Colors.white, // icon color
+                  size: 16, // icon size
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
