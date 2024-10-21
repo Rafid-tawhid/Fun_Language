@@ -67,23 +67,57 @@ class PostCard extends StatelessWidget {
             SizedBox(height: 10),
             Divider(),
 
-            //Like, Comment, Share Row
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildPostAction(Icons.thumb_up_alt_outlined, 'Like',postData, postData.postId,context, (){
-                  debugPrint('Clicked Like');
-                  var pp=context.read<PostProvider>();
-                  pp.saveLikeInfo(id: postData.postId,userId:FirebaseAuth.instance.currentUser!.uid,like: true);
-                }),
-                _buildPostAction(Icons.comment_outlined, 'Comment',postData, postData.postId,context,(){
-                  debugPrint('Clicked Comment');
-                  var pp=context.read<PostProvider>();
-                  // pp.getPost(postsId,postData['userId']);
-                }),
-                _buildPostAction(Icons.share_outlined, 'Share',postData, postData.postId,context,(){
-                  debugPrint('Clicked Share');
-                }),
+                Expanded(
+                  child: InkWell(
+                    onTap:(){
+                      var pp=context.read<PostProvider>();
+                      pp.saveLikeInfo(id: postData.postId,userId:FirebaseAuth.instance.currentUser!.uid,like: true);
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(Icons.thumb_up_alt_outlined, color: Colors.grey),
+                        SizedBox(width: 5),
+                        Text('Like'+' (${0})')
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: InkWell(
+                    onTap:(){},
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(Icons.comment_outlined, color: Colors.grey),
+                        SizedBox(width: 5),
+                        Text('Comments')
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: InkWell(
+                    onTap:(){
+                      var pp=context.read<PostProvider>();
+                      pp.saveLikeInfo(id: postData.postId,userId:FirebaseAuth.instance.currentUser!.uid,like: true);
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Icon(Icons.share_outlined, color: Colors.grey),
+                        SizedBox(width: 5),
+                        Text('Share'+' (${0})')
+                      ],
+                    ),
+                  ),
+                )
               ],
             ),
           ],
