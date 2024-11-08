@@ -73,9 +73,29 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                 Row(
                   children: [
                     ClipRRect(
-                      child: Image.network(UserModel.image??'https://cdn.vectorstock.com/i/preview-1x/17/61/male-avatar-profile-picture-vector-10211761.jpg',height: 60,width: 60,fit: BoxFit.cover,),
                       borderRadius: BorderRadius.circular(50.0),
-
+                      child: UserModel.image != null && UserModel.image!.isNotEmpty
+                          ? Image.network(
+                        UserModel.image??'',
+                        height: 60,
+                        width: 60,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          // Display a placeholder image on error
+                          return Image.asset(
+                            'images/avater.gif', // Make sure this path is correct
+                            height: 60,
+                            width: 60,
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      )
+                          : Image.asset(
+                        'images/avater.gif', // Placeholder for null image URL
+                        height: 60,
+                        width: 60,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                     SizedBox(width: 10),
                     Expanded(
