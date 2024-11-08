@@ -35,7 +35,9 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
         _isFocused = _focusNode.hasFocus;
       });
     });
-   getAllPost();
+   Future.microtask((){
+     getAllPost();
+   });
   }
 
   @override
@@ -147,6 +149,7 @@ class _TrafficUpdateScreenState extends State<TrafficUpdateScreen> {
                     ),
                   ),
                 ),
+                pp.showLoadingPost?Center(child: CircularProgressIndicator(),):
                 ListView.builder(
                   itemCount: pp.postModelList.length,
                   shrinkWrap: true,

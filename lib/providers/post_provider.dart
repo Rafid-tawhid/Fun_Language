@@ -15,6 +15,7 @@ class PostProvider extends ChangeNotifier{
   List<LikeModel> likeList=[];
   List<File> uploadImageList=[];
   bool isLoading=false;
+  bool showLoadingPost=false;
 
   Future<void> saveLikeInfo({
     required String id,
@@ -144,7 +145,9 @@ class PostProvider extends ChangeNotifier{
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     try {
       // Get the post document from Firestore
+      showLoading(true);
       var postSnapshot = await _firestore.collection('posts').orderBy('timestamp', descending: true).get();
+      showLoading(false);
       postModelList.clear();
       likeList.clear();
       if (postSnapshot.docs.isNotEmpty) {
@@ -175,6 +178,10 @@ class PostProvider extends ChangeNotifier{
       print('Error getting post: $e');
       return null;
     }
+  }
+  void showLoading(bool load){
+    showLoadingPost=load;
+    notifyListeners();
   }
 
   void saveToImageList(File pickedFile) {
