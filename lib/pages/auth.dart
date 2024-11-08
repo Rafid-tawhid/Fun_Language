@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:my_messenger/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../widgets/user_image.dart';
@@ -167,6 +168,7 @@ class _AuthScreenState extends State<AuthScreen> {
           await prefs.setString('username', _username);
           await prefs.setString('email', _email);
           await prefs.setString('image_url', imageUrl);
+          UserModel.setData(_username, _email, imageUrl);
         }
       }
          on FirebaseAuthException catch(error){

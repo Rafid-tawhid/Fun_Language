@@ -43,17 +43,16 @@ class SplashScreen extends StatelessWidget {
     String name= prefs.getString('username')??'';
     String email= prefs.getString('email')??'';
     String image= prefs.getString('image_url')??'';
-    UserModel.setData(name, email, image);
-    // var info= await FirebaseFirestore.instance.collection('users').get();
-    // final loadedMessage=info.docs;
-    // loadedMessage.forEach((element) {
-    //   if(element['email']==FirebaseAuth.instance.currentUser!.email){
-    //     UserModel.name=element['username'];
-    //     UserModel.email=element['email'];
-    //     UserModel.image=element['image_url'];
-    //   }
-    // });
-    // print('info ${loadedMessage.length}');
+
+    var info= await FirebaseFirestore.instance.collection('users').get();
+    final loadedMessage=info.docs;
+    loadedMessage.forEach((element) {
+      if(element['email']==FirebaseAuth.instance.currentUser!.email){
+        debugPrint('USER FOUND');
+        UserModel.setData(element['username'], element['email'], element['image_url']);
+      }
+    });
+    print('info ${loadedMessage.length}');
 
   }
 }
