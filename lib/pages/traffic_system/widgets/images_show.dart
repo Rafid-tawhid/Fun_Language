@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PostImageWidget extends StatelessWidget {
@@ -18,9 +19,16 @@ class PostImageWidget extends StatelessWidget {
 
     return Visibility(
       visible: imageCount > 0,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(10.0),
-        child: buildImageLayout(imageCount),
+      child: GestureDetector(
+        onTap: (){
+          if(imageCount>0){
+            Navigator.push(context, CupertinoPageRoute(builder: (context)=>ImageViewSlider(imageUrls??[])));
+          }
+        },
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10.0),
+          child: buildImageLayout(imageCount),
+        ),
       ),
     );
   }
@@ -153,6 +161,47 @@ class PostImageWidget extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+
+class ImageViewSlider extends StatelessWidget {
+  final List<String> imageUrls;
+
+
+  ImageViewSlider(this.imageUrls);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Column(
+        children: [
+          Expanded(child: Center(
+            child: Stack(
+              children: [
+                ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: imageUrls.length,
+                  itemBuilder: (context,index)=>Image.network(
+                      imageUrls[index],
+                    width: MediaQuery.sizeOf(context).width,
+                  ),
+                ),
+                Positioned(
+                  child: IconButton(onPressed: (){
+                    Navigator.pop(context);
+
+                  }, icon: Icon(Icons.close,color: Colors.white,)),
+                  right: 10,
+                  top: 10,
+                ),
+              ],
+            ),
+          )),
+        ],
+      ),
     );
   }
 }
