@@ -10,6 +10,7 @@ class PostModel {
   String comment; // List of CommentModel
   DateTime? timestamp;
   List<String>? imageUrls;
+  bool isLikedAlready;
 
   PostModel({
     required this.userId,
@@ -21,7 +22,8 @@ class PostModel {
     this.share = '0',
     this.comment = '0',
     this.timestamp,
-    this.imageUrls
+    this.imageUrls,
+    this.isLikedAlready=false,
   });
 
   Map<String, dynamic> toMap() {
@@ -35,7 +37,7 @@ class PostModel {
       'share': share, // assuming shares are userIds
       'comment': comment,
       'timestamp': timestamp != null ? Timestamp.fromDate(timestamp!) : FieldValue.serverTimestamp(),
-      'imageUrls': imageUrls
+      'imageUrls': imageUrls,
     };
   }
 
@@ -52,10 +54,11 @@ class PostModel {
       comment: map['comment'] ?? '0',
       timestamp: map['timestamp'] != null ? (map['timestamp'] as Timestamp).toDate() : null,
       imageUrls: map['imageUrls'] != null ? List<String>.from(map['imageUrls']) : null, // Cast the list explicitly
+      isLikedAlready: map['isLikedAlready']??false, // Cast the list explicitly
     );
   }
 
-  PostModel updatePostModel(PostModel post, Map<String, dynamic> updatedData) {
+   PostModel updatePostModel(PostModel post, Map<String, dynamic> updatedData) {
     // Update the fields in the PostModel based on the map
     if (updatedData.containsKey('content')) {
       post.content = updatedData['content'];
@@ -74,6 +77,9 @@ class PostModel {
     }
     if (updatedData.containsKey('timestamp')) {
       post.timestamp = updatedData['timestamp'];
+    }
+    if (updatedData.containsKey('isLikedAlready')) {
+      post.isLikedAlready = updatedData['isLikedAlready'];
     }
 
     // Return the updated PostModel

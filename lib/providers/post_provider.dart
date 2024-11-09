@@ -36,8 +36,6 @@ class PostProvider extends ChangeNotifier{
            .collection('likes')
            .where('userId', isEqualTo: userId)
            .get();
-
-// Loop through the documents and delete each one from the correct path
        for (QueryDocumentSnapshot doc in querySnapshot.docs) {
          await _firestore
              .collection('posts')
@@ -69,6 +67,7 @@ class PostProvider extends ChangeNotifier{
       }).toList();
 
       notifyListeners();
+      _firestore.collection('posts').doc(id).collection('likes').where('userId',isEqualTo: userId).limit(1);
 
     } catch (e) {
       // Handle errors
@@ -137,6 +136,11 @@ class PostProvider extends ChangeNotifier{
   }
 
 
+  // Future<bool> isLikedAlready(userId){
+  //
+  //   FirebaseFirestore _firestore;
+  //   _firestore.collection(collectionPath)
+  // }
 
 
 
@@ -147,6 +151,7 @@ class PostProvider extends ChangeNotifier{
       // Get the post document from Firestore
       showLoading(true);
       var postSnapshot = await _firestore.collection('posts').orderBy('timestamp', descending: true).get();
+
       showLoading(false);
       postModelList.clear();
       likeList.clear();
@@ -156,16 +161,15 @@ class PostProvider extends ChangeNotifier{
           postModelList.add(PostModel.fromMap(i.data()));
         }
         var likes=await _firestore.collection('posts').get();
-
         for(var i in likes.docs){
          // likeList.add(LikeModel.fromMap(i.data()['likes']));
          var data= await _firestore.collection('posts').doc(i.id).collection('likes').get();
-          // likeList.add(LikeModel.fromMap(data.docs));
          List<LikeModel> postsLikes = data.docs.map((doc) {
            return LikeModel.fromMap(doc.data());
          }).toList();
-         likeList.addAll(postsLikes);
+        likeList.addAll(postsLikes);
         }
+
         debugPrint('postModelList ${postModelList.length}');
         debugPrint('likeList ${likeList.length}');
         notifyListeners();
@@ -179,6 +183,39 @@ class PostProvider extends ChangeNotifier{
       return null;
     }
   }
+
+
+  //Future<void> getPost() async {
+  //     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  //     try {
+  //       // Get the post document from Firestore
+  //       showLoading(true);
+  //       var postSnapshot = await _firestore.collection('posts').orderBy('timestamp', descending: true).get();
+  //
+  //       showLoading(false);
+  //       postModelList.clear();
+  //       likeList.clear();
+  //       if (postSnapshot.docs.isNotEmpty) {
+  //
+  //         for(var i in postSnapshot.docs){
+  //           var isLiked= await _firestore.collection('posts').doc(i.id).collection('likes').where('userId',isEqualTo: FirebaseAuth.instance.currentUser!.uid).limit(1).get();
+  //           bool isLikedPost=isLiked.docs.isNotEmpty?true:false;
+  //           PostModel postModel=PostModel.fromMap(i.data());
+  //           postModelList.add(postModel);
+  //           postModel.updatePostModel(postModel, {'isLikedAlready': isLikedPost});
+  //           debugPrint('postModelList ${postModel.toMap()}');
+  //         }
+  //         notifyListeners();
+  //         // Return the PostModel
+  //       } else {
+  //         print('Post not found');
+  //         return null;
+  //       }
+  //     } catch (e) {
+  //       print('Error getting post: $e');
+  //       return null;
+  //     }
+  //   }
   void showLoading(bool load){
     showLoadingPost=load;
     notifyListeners();

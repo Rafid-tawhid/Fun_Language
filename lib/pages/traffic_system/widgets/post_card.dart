@@ -75,7 +75,14 @@ class _PostCardState extends State<PostCard> {
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Icon(Icons.thumb_up_alt_outlined, color: Colors.grey),
+
+                        // Consumer<PostProvider>(
+                        //   builder: (context,pp,_)=>FutureBuilder(future: pp.saveLikeInfo(id: widget.postData.postId,userId:FirebaseAuth.instance.currentUser!.uid,like: true),
+                        //       builder: (context,val)=>Icon(Icons.thumb_up,color: val.hasData?Colors.blue:Colors.grey,)
+                        //   )
+                        // ),
+
+                      Icon(Icons.thumb_up,color: widget.postData.isLikedAlready?Colors.blue:Colors.grey,),
                         SizedBox(width: 5),
                         Text('Like'+' (${widget.postData.like})')
                       ],
