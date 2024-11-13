@@ -25,9 +25,7 @@ class PostProvider extends ChangeNotifier{
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
     try {
-
       int? likes;
-
       QuerySnapshot allLikesOfThatPost=await _firestore.collection('posts').doc(id).collection('likes').where('userId',isEqualTo: userId).get();
      if(allLikesOfThatPost.docs.length>0){
        QuerySnapshot querySnapshot = await _firestore
@@ -156,19 +154,11 @@ class PostProvider extends ChangeNotifier{
       postModelList.clear();
       likeList.clear();
       if (postSnapshot.docs.isNotEmpty) {
-
         for(var i in postSnapshot.docs){
+          final List<LikeModel> likes= await getLikeListOfThiDocument(i.id);
+
           postModelList.add(PostModel.fromMap(i.data()));
         }
-       // var likes=await _firestore.collection('posts').get();
-        // for(var i in likes.docs){
-        //  // likeList.add(LikeModel.fromMap(i.data()['likes']));
-        //  var data= await _firestore.collection('posts').doc(i.id).collection('likes').get();
-        //  List<LikeModel> postsLikes = data.docs.map((doc) {
-        //    return LikeModel.fromMap(doc.data());
-        //  }).toList();
-        // likeList.addAll(postsLikes);
-        // }
 
         debugPrint('postModelList ${postModelList.length}');
         debugPrint('likeList ${likeList.length}');
