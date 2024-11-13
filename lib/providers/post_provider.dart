@@ -160,15 +160,15 @@ class PostProvider extends ChangeNotifier{
         for(var i in postSnapshot.docs){
           postModelList.add(PostModel.fromMap(i.data()));
         }
-        var likes=await _firestore.collection('posts').get();
-        for(var i in likes.docs){
-         // likeList.add(LikeModel.fromMap(i.data()['likes']));
-         var data= await _firestore.collection('posts').doc(i.id).collection('likes').get();
-         List<LikeModel> postsLikes = data.docs.map((doc) {
-           return LikeModel.fromMap(doc.data());
-         }).toList();
-        likeList.addAll(postsLikes);
-        }
+       // var likes=await _firestore.collection('posts').get();
+        // for(var i in likes.docs){
+        //  // likeList.add(LikeModel.fromMap(i.data()['likes']));
+        //  var data= await _firestore.collection('posts').doc(i.id).collection('likes').get();
+        //  List<LikeModel> postsLikes = data.docs.map((doc) {
+        //    return LikeModel.fromMap(doc.data());
+        //  }).toList();
+        // likeList.addAll(postsLikes);
+        // }
 
         debugPrint('postModelList ${postModelList.length}');
         debugPrint('likeList ${likeList.length}');
