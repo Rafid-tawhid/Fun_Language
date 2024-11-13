@@ -75,9 +75,9 @@ class _PostCardState extends State<PostCard> {
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Icon(Icons.thumb_up,color:Colors.grey,),
+                        Icon(Icons.thumb_up,color:widget.postData.likeList!.any((e)=>e.userId==FirebaseAuth.instance.currentUser!.uid)?Colors.blue: Colors.grey,),
                         SizedBox(width: 5),
-                        Text('Like'+' (${widget.postData.like})')
+                        Text('Like'+' (${widget.postData.likeList!.length})')
                       ],
                     ),
                   ),

@@ -12,7 +12,6 @@ import 'package:image_picker/image_picker.dart';
 
 class PostProvider extends ChangeNotifier{
   List<PostModel> postModelList=[];
-  List<LikeModel> likeList=[];
   List<File> uploadImageList=[];
   bool isLoading=false;
   bool showLoadingPost=false;
@@ -148,22 +147,20 @@ class PostProvider extends ChangeNotifier{
     try {
       // Get the post document from Firestore
       showLoading(true);
+      postModelList.clear();
+
       var postSnapshot = await _firestore.collection('posts').orderBy('timestamp', descending: true).get();
 
-      showLoading(false);
-      postModelList.clear();
-      likeList.clear();
       if (postSnapshot.docs.isNotEmpty) {
         for(var i in postSnapshot.docs){
-          final List<LikeModel> likes= await getLikeListOfThiDocument(i.id);
-
-          postModelList.add(PostModel.fromMap(i.data()));
+          final List<LikeModel> likes= await getLikeListOfThiDocument(i.reference);
+          postModelList.add(PostModel.fromMap(i.data(),likes: likes));
         }
+       // likeList.clear();
 
         debugPrint('postModelList ${postModelList.length}');
-        debugPrint('likeList ${likeList.length}');
-        notifyListeners();
-        // Return the PostModel
+
+        showLoading(false);
       } else {
         print('Post not found');
         return null;
@@ -233,6 +230,24 @@ class PostProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  Future<List<LikeModel>> getLikeListOfThiDocument(DocumentReference postRef) async {
+    try {
+      final likeSnapshot = await postRef.collection('likes').get();
+      return likeSnapshot.docs.map((doc) => LikeModel.fromMap(doc.data())).toList();
+    } catch (e) {
+      print('Error getting likes: $e');
+      return [];
+    }
+  }
 
+
+// for(var i in likes.docs){
+//  // likeList.add(LikeModel.fromMap(i.data()['likes']));
+//  var data= await _firestore.collection('posts').doc(i.id).collection('likes').get();
+//  List<LikeModel> postsLikes = data.docs.map((doc) {
+//    return LikeModel.fromMap(doc.data());
+//  }).toList();
+// likeList.addAll(postsLikes);
+// }
 
 }

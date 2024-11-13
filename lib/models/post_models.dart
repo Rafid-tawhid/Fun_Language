@@ -24,7 +24,7 @@ class PostModel {
     this.comment = '0',
     this.timestamp,
     this.imageUrls,
-    this.likeList
+     this.likeList
   });
 
   Map<String, dynamic> toMap() {
@@ -44,7 +44,7 @@ class PostModel {
   }
 
   // Factory constructor to create a PostModel from a map (for retrieving from Firestore)
-  factory PostModel.fromMap(Map<String, dynamic> map) {
+  factory PostModel.fromMap(Map<String, dynamic> map, {List<LikeModel>? likes}) {
     return PostModel(
       userId: map['userId'] ?? 'unknown',
       content: map['content'] ?? '',
@@ -56,7 +56,7 @@ class PostModel {
       comment: map['comment'] ?? '0',
       timestamp: map['timestamp'] != null ? (map['timestamp'] as Timestamp).toDate() : null,
       imageUrls: map['imageUrls'] != null ? List<String>.from(map['imageUrls']) : null,
-      likeList: map['likeList']
+      likeList: likes??[]
     );
   }
 
