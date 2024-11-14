@@ -25,76 +25,66 @@ class PostProvider extends ChangeNotifier{
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
     try {
-      int? likes;
-      QuerySnapshot allLikesOfThatPost=await _firestore.collection('posts').doc(id).collection('likes').where('userId',isEqualTo: userId).get();
-     if(allLikesOfThatPost.docs.length>0){
-       var deleteDocId;
-       QuerySnapshot querySnapshot = await _firestore
-           .collection('posts')
-           .doc(id)
-           .collection('likes')
-           .where('userId', isEqualTo: userId)
-           .get();
-       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
-         await _firestore
-             .collection('posts')
-             .doc(id)
-             .collection('likes')
-             .doc(doc.id)
-             .delete();  // Ensure you're deleting from the same collection where you're querying from
-         debugPrint('Deleted document with ID: ${doc.id}');
-         //update main post data list
-         deleteDocId=doc.id;
+      // Check if user has already liked the post
+      final userLikeDocs = await _firestore
+          .collection('posts')
+          .doc(id)
+          .collection('likes')
+          .where('userId', isEqualTo: userId)
+          .get();
 
-       }
-       postModelList =postModelList.map((post){
-         if(post.postId==postItem.postId){
-           return post.updateLikeList(postItem,deleteDocId, false);
-         }
-         return post;
-       }).toList();
-       notifyListeners();
+      // If like exists, remove it; otherwise, add a new like
+      int updatedLikes;
+      if (userLikeDocs.docs.isNotEmpty) {
+        // Remove like from Firestore
+        for (var doc in userLikeDocs.docs) {
+          await _firestore.collection('posts').doc(id).collection('likes').doc(doc.id).delete();
+        }
 
-       var getLikesCount = await _firestore.collection('posts').doc(id).get();
-      likes = int.parse(getLikesCount['like']) - 1;
+        // Update local post data
+        postModelList = postModelList.map((post) {
+          if (post.postId == postItem.postId) {
+            return post.updateLikeList(postItem, userLikeDocs.docs.first.id, false);
+          }
+          return post;
+        }).toList();
 
+        // Decrement like count
+        final postSnapshot = await _firestore.collection('posts').doc(id).get();
+        updatedLikes = (int.parse(postSnapshot['like']) - 1);
+      } else {
+        // Add new like to Firestore
+        final newLikeRef = _firestore.collection('posts').doc(id).collection('likes').doc();
+        await newLikeRef.set(LikeModel(docRef: newLikeRef.id, userId: userId, like: true).toMap());
 
-     }
-     else {
-       DocumentReference docRef=_firestore.collection('posts').doc(id).collection('likes').doc();
-       docRef.set(LikeModel(docRef: docRef.id, userId: userId??'', like: true).toMap());
-       var getLikesCount = await _firestore.collection('posts').doc(id).get();
-       likes = int.parse(getLikesCount['like']) + 1;
+        // Update local post data
+        postModelList = postModelList.map((post) {
+          if (post.postId == postItem.postId) {
+            return post.updateLikeList(postItem, newLikeRef.id, true);
+          }
+          return post;
+        }).toList();
 
-       //delete from main post data list
-       postModelList=postModelList.map((post){
-         if(post.postId==postItem.postId){
-          return post.updateLikeList(postItem,docRef.id, true);
-         }
-         notifyListeners();
-         return post;
-       }).toList();
-       notifyListeners();
-     }
-      // Update the like count in Firestore
-      await _firestore.collection('posts').doc(id).update({'like': '$likes'});
+        // Increment like count
+        final postSnapshot = await _firestore.collection('posts').doc(id).get();
+        updatedLikes = (int.parse(postSnapshot['like']) + 1);
+      }
 
-      // Update the like count in the postModelList
+      // Update like count in Firestore and locally
+      await _firestore.collection('posts').doc(id).update({'like': '$updatedLikes'});
       postModelList = postModelList.map((post) {
         if (post.postId == id) {
-          return post.updatePostModel(post, {'like': likes.toString()});
+          return post.updatePostModel(post, {'like': updatedLikes.toString()});
         }
         return post;
       }).toList();
 
       notifyListeners();
-      _firestore.collection('posts').doc(id).collection('likes').where('userId',isEqualTo: userId).limit(1);
-
     } catch (e) {
-      // Handle errors
       print('Error uploading like info: $e');
     }
   }
+
 
 
 
