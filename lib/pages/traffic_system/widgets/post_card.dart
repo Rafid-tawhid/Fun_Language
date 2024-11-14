@@ -69,7 +69,9 @@ class _PostCardState extends State<PostCard> {
                   child: InkWell(
                     onTap:(){
                       var pp=context.read<PostProvider>();
-                      pp.saveLikeInfo(id: widget.postData.postId,userId:FirebaseAuth.instance.currentUser!.uid,like: true);
+                     // pp.updateModel(widget.postData);
+
+                      pp.saveLikeInfo(id: widget.postData.postId,userId:FirebaseAuth.instance.currentUser!.uid,like: true,postItem: widget.postData);
                     },
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -77,7 +79,7 @@ class _PostCardState extends State<PostCard> {
                       children: [
                         Icon(Icons.thumb_up,color:widget.postData.likeList!.any((e)=>e.userId==FirebaseAuth.instance.currentUser!.uid)?Colors.blue: Colors.grey,),
                         SizedBox(width: 5),
-                        Text('Like'+' (${widget.postData.likeList!.length})')
+                        Text('Like'+' (${widget.postData.like})')
                       ],
                     ),
                   ),
@@ -104,8 +106,8 @@ class _PostCardState extends State<PostCard> {
                 Expanded(
                   child: InkWell(
                     onTap:(){
-                      var pp=context.read<PostProvider>();
-                      pp.saveLikeInfo(id: widget.postData.postId,userId:FirebaseAuth.instance.currentUser!.uid,like: true);
+                      // var pp=context.read<PostProvider>();
+                      // pp.saveLikeInfo(id: widget.postData.postId,userId:FirebaseAuth.instance.currentUser!.uid,like: true);
                     },
                     child: Row(
                       mainAxisSize: MainAxisSize.min,

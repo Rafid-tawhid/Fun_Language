@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 class PostModel {
   String userId;
   String postId;
@@ -83,6 +84,23 @@ class PostModel {
 
 
     // Return the updated PostModel
+    return post;
+  }
+
+  PostModel updateLikeList(PostModel post,String likeId, bool update) {
+
+    debugPrint('LIKE LENGTH ${post.likeList!.length}');
+    if(update){
+      post.likeList!.add(LikeModel(docRef: post.postId, userId: userId, like: update));
+      debugPrint('LIKE UPDATED ${post.likeList!.length}');
+    }
+    else {
+      post.likeList!.removeWhere((e)=>e.userId==post.userId);
+      debugPrint('LIKE DELETED ${post.likeList!.length}');
+    }
+
+    debugPrint('POST LENGTH ${post.likeList!.length}');
+
     return post;
   }
 
