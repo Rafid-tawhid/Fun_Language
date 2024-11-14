@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 class GrammarGuideScreen extends StatefulWidget {
  static const String routeName='/grammer';
   final GrammarGuide grammarGuide = GrammarGuide(
-    apiKey: '379fe71e03msh216273e71a2dce3p14cb76jsnca85298c495e',
+    apiKey: '',
     apiHost: 'wordsapiv1.p.rapidapi.com',
     apiEndpoint: 'https://wordsapiv1.p.rapidapi.com',
   );
