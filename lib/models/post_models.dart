@@ -81,7 +81,6 @@ class PostModel {
     if (updatedData.containsKey('timestamp')) {
       post.timestamp = updatedData['timestamp'];
     }
-//
 
 
     // Return the updated PostModel
